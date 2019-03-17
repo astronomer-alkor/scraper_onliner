@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Scraper</title>
+</head>
+<body>
+    <div class="container">
+        <div class="products">
+            {% for product in products %}
+                <div class="products_item">
+                    <div class="product__image">
+                        <img src="{{product.img_url}}" alt="mobile phone">
+                    </div>
+                    <div class="product__info">
+                        <p class="product__name">{{ product.name }}</p>
+                        <p class="product__description">{{ product.description }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

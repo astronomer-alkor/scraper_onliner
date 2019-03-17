@@ -1,41 +1,38 @@
 from urllib.parse import urlencode
 from datetime import datetime
-from pymongo import MongoClient
+from app.core.database import db
 from bs4 import BeautifulSoup
 import requests
-import json
-
-
-def create_database_connection():
-    client = MongoClient()
-    db = client.test_database
-    return db
-
-
-DB = create_database_connection()
 
 
 def process_product(product):
-    products = DB.products
+    products = db.products
     item = products.find_one({'key': product['key']})
     if not item:
         products.insert_one(product)
     else:
-        products.update_one({'key': product['key']}, {'$push': {'price': product['price']}})
+        today = datetime.now().strftime('%Y-%m-%d')
+        if today not in item['price']:
+            products.update_one({'key': product['key']}, {'$set': {f'price.{today}': product['price'][today]}})
 
 
-def get_data_by_request(url):
+def get_data_by_request(url, category):
     items = requests.get(url).json()['products']
     for item in items:
         data = {}
         current_price = {}
-        keys = ('id', 'key', 'name', 'micro_description', 'html_url')
+        data['price'] = {}
+        keys = ('id', 'key', 'name', 'description', 'micro_description', 'html_url')
         for key in keys:
-            data[key] = item[key]
-        current_price['datetime'] = datetime.now().strftime('%Y-%d-%m %H:%M')
+            if isinstance(item[key], str):
+                data[key] = item[key].replace('&quot;', '"')
+            else:
+                data[key] = item[key]
         current_price['price_min'] = item['prices']['price_min']['amount']
         current_price['price_max'] = item['prices']['price_max']['amount']
-        data['price'] = [current_price, ]
+        data['price'][datetime.now().strftime('%Y-%m-%d')] = current_price
+        data['img_url'] = ''.join(('https:', item['images']['header']))
+        data['category'] = category
         data['spec'] = parse_catalog_item(data['html_url'])
         yield data
 
@@ -81,11 +78,16 @@ def parse_catalog_item(url):
 def main():
     base_url = 'https://catalog.api.onliner.by/search'
     categories = ('mobile', )
+    counter = 0
     for category in categories:
         page_count = get_page_count(base_url, category)
         for url in generate_urls(base_url, category, page_count):
-            for data in get_data_by_request(url):
+            for data in get_data_by_request(url, category):
                 process_product(data)
+                counter += 1
+                print(counter)
+                if counter == 20:
+                    exit()
 
 
 if __name__ == '__main__':
