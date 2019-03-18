@@ -2,11 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <title>{{ product.name }}</title>
 </head>
 <body>
     <div class="container">
+        <h1 class="product_caption">{{ product.name }}</h1>
         <div class="product_block">
             <div class="product_image">
                 <img height="225" width="170" src="{{product.img_url}}" class="product_image__image">
@@ -14,7 +17,7 @@
             <div class="product_description">
                 <p class="full_description">{{ product.description}}</p>
                 <div class="product__price">
-                    {{ product.current_price.price_min }} – {{ product.current_price.price_max}}
+                    {{ product.current_price.price_min }} – {{ product.current_price.price_max}} руб.
                 </div>
             </div>
         </div>
@@ -27,12 +30,49 @@
                  <tr class="table_row">
                      <td class="table_col">{{ key }}</td>
                      <td class="table_col">
-                         <div>{{ value }}</div>
+                         {% if value == True %}
+                            <i class="fas fa-check fas_green"></i>
+                         {% elif value == False %}
+                             <i class="fas fa-times fas_red"></i>
+                         {% else %}
+                            <div>{{ value }}</div>
+                         {% endif %}
                      </td>
                  </tr>
              {% endfor %}
          {% endfor %}
         </table>
+        {% if product.price|length > 1 %}
+            <div id="curve_chart" style="width: 900px; height: 500px"></div>
+        {% endif %}
     </div>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Date', 'Minimum price', 'Maximum price'],
+                {% for date, price in product.price.items() %}
+                    [new Date({{ date.replace('-', ', ') }}), {{ price.price_min }}, {{ price.price_max }}],
+                {% endfor %}
+            ]);
+
+            var options = {
+              title: 'Price chart',
+              curveType: 'function',
+              legend: { position: 'bottom' },
+              hAxis: {
+                format: 'yyyy-M-d',
+                gridlines: {count: 15}
+              }
+            };
+
+            var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+            chart.draw(data, options);
+        }
+    </script>
 </body>
 </html>

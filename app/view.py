@@ -3,12 +3,16 @@ from app.core.database import (
     get_products_preview,
     get_product_data
 )
-from flask import render_template
+from flask import (
+    render_template,
+    request
+)
 
 
 @app.route('/')
 def index():
-    return render_template('index.html', products=get_products_preview())
+    page = request.args.get('page', default=1, type=int)
+    return render_template('index.html', products=get_products_preview(page=page))
 
 
 @app.route('/<category>/<product_name>')

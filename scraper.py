@@ -1,20 +1,22 @@
 from urllib.parse import urlencode
 from datetime import datetime
-from app.core.database import db
 from bs4 import BeautifulSoup
 import requests
+from app.core.database import db
 
 
 def process_product(product):
     products = db.products
     item = products.find_one({'key': product['key']})
     if not item:
+        print('not exist')
         products.insert_one(product)
     else:
+        print('exist')
         today = datetime.now().strftime('%Y-%m-%d')
         if today not in item['price']:
-            products.update_one({'key': product['key']}, {'$set': {f'price.{today}': product['price'][today]},
-                                                          'current_price': product['price'][today]})
+            products.update_one({'key': product['key']}, {'$set': {f'price.{today}': product['price'][today],
+                                                                   'current_price': product['price'][today]}})
 
 
 def get_data_by_request(url, category):
@@ -53,7 +55,7 @@ def get_page_count(url, category):
 def generate_urls(url, category, page_count):
     for counter in range(1, page_count + 1):
         params = {'price[from]': '1.00',
-                  'page': 1}
+                  'page': counter}
         yield f'{url}/{category}?{urlencode(params)}'
 
 
@@ -97,8 +99,8 @@ def main():
                 process_product(data)
                 counter += 1
                 print(counter, 'from', page_count * 30)
-                if counter == 20:
-                    exit()
+                # if counter == 50:
+                #     exit()
 
 
 if __name__ == '__main__':

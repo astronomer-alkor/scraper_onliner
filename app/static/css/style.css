@@ -48,6 +48,12 @@ p {
     font-size: 15px;
 }
 
+.product_caption {
+    max-width: 1000px;
+    margin: 0 auto;
+    margin-bottom: 20px;
+}
+
 .product__description {
     max-width: 400px;
     margin-top: 10px;
@@ -57,13 +63,24 @@ p {
 
 .product__price {
     margin-top: 10px;
+    font-size: 20px;
+    color: crimson;
+    font-weight: bold;
 }
 
 .product_block {
     display: flex;
-    justify-content: space-evenly;
-    max-width: 900px;
+    max-width: 1000px;
+    box-sizing: border-box;
     margin: 0 auto;
+    margin-bottom: 10px;
+    padding-left: 70px;
+}
+
+.product_description {
+    box-sizing: border-box;
+    margin-left: 20px;
+    padding-top: 10px;
 }
 
 .product_table {
@@ -105,4 +122,12 @@ p {
 
 .full_description {
     max-width: 500px;
+}
+
+.fas_green {
+    color: #18b703;
+}
+
+.fas_red {
+    color: #808080;
 }
