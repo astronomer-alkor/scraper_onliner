@@ -3,6 +3,10 @@ body {
     font-family: 'Open Sans',Arial,Helvetica,Verdana,sans-serif;
 }
 
+p {
+    margin: 0;
+}
+
 .container {
     min-height: 100%;
     min-width: 980px;
@@ -28,8 +32,14 @@ body {
     flex-direction: column;
     justify-content: flex-start;
     max-width: 450px;
+    padding-top: 10px;
     padding-right: 30px;
     box-sizing: border-box;
+}
+
+.product__link {
+    text-decoration: none;
+    color: #000000;
 }
 
 .product__name {
@@ -39,6 +49,11 @@ body {
 
 .product__description {
     max-width: 400px;
+    margin-top: 10px;
     font-size: 13px;
     color: #333333;
+}
+
+.product__price {
+    margin-top: 10px;
 }

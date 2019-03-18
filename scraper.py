@@ -13,7 +13,8 @@ def process_product(product):
     else:
         today = datetime.now().strftime('%Y-%m-%d')
         if today not in item['price']:
-            products.update_one({'key': product['key']}, {'$set': {f'price.{today}': product['price'][today]}})
+            products.update_one({'key': product['key']}, {'$set': {f'price.{today}': product['price'][today]},
+                                                          'current_price': product['price'][today]})
 
 
 def get_data_by_request(url, category):
@@ -28,8 +29,11 @@ def get_data_by_request(url, category):
                 data[key] = item[key].replace('&quot;', '"')
             else:
                 data[key] = item[key]
-        current_price['price_min'] = item['prices']['price_min']['amount']
-        current_price['price_max'] = item['prices']['price_max']['amount']
+        min_price = item['prices']['price_min']['amount']
+        max_price = item['prices']['price_max']['amount']
+        current_price['price_min'] = min_price
+        current_price['price_max'] = max_price
+        data['current_price'] = current_price
         data['price'][datetime.now().strftime('%Y-%m-%d')] = current_price
         data['img_url'] = ''.join(('https:', item['images']['header']))
         data['category'] = category
@@ -60,7 +64,8 @@ def parse_catalog_item(url):
             row_items = row.find_all('td', recursive=False)
             key = row_items[0].contents[0].strip()
             try:
-                value = '\n'.join([row_item for row_item in row_items[1].find('span', class_='value__text').contents
+                value = '\n'.join([row_item.replace('\xa0', ' ') for row_item
+                                   in row_items[1].find('span', class_='value__text').contents
                                    if isinstance(row_item, str)])
             except AttributeError:
                 value = row_items[1].find('span')

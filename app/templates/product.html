@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ product.name }}</title>
+</head>
+<body>
+     <table>
+         {% for title, rows in product.spec.items() %}
+              <tr class="table_title"><td>{{ title }}</td></tr>
+             {% for key, value in rows.items() %}
+                 <tr class="table_row">
+                     <td class="table_col">{{ key }}</td>
+                     <td class="table_col">{{ value }}</td>
+                 </tr>
+             {% endfor %}
+         {% endfor %}
+     </table>
+</body>
+</html>

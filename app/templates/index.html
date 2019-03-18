@@ -11,11 +11,14 @@
             {% for product in products %}
                 <div class="products_item">
                     <div class="product__image">
-                        <img src="{{product.img_url}}" alt="mobile phone">
+                        <img src="{{product.img_url}}">
                     </div>
                     <div class="product__info">
-                        <p class="product__name">{{ product.name }}</p>
+                        <a href="/{{ product.category }}/{{ product.key }}" class="product__link">
+                            <p class="product__name">{{ product.name }}</p>
+                        </a>
                         <p class="product__description">{{ product.description }}</p>
+                        <p class="product__price">от {{ product.current_price.price_min }} руб.</p>
                     </div>
                 </div>
             {% endfor %}
