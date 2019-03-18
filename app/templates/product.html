@@ -7,7 +7,9 @@
 <body>
      <table>
          {% for title, rows in product.spec.items() %}
-              <tr class="table_title"><td>{{ title }}</td></tr>
+              <tr class="table_title">
+                  <td>{{ title }}</td>
+              </tr>
              {% for key, value in rows.items() %}
                  <tr class="table_row">
                      <td class="table_col">{{ key }}</td>
