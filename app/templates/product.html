@@ -2,10 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <title>{{ product.name }}</title>
 </head>
 <body>
-     <table>
+    <div class="container">
+        <div class="product_block">
+            <div class="product_image">
+                <img height="225" width="170" src="{{product.img_url}}" class="product_image__image">
+            </div>
+            <div class="product_description">
+                <p class="full_description">{{ product.description}}</p>
+                <div class="product__price">
+                    <span>{{ product.current_price.price_min }}</span>-<span> {{ product.current_price.price_max}}</span>
+                </div>
+            </div>
+        </div>
+        <table class="product_table">
          {% for title, rows in product.spec.items() %}
               <tr class="table_title">
                   <td>{{ title }}</td>
@@ -17,6 +30,7 @@
                  </tr>
              {% endfor %}
          {% endfor %}
-     </table>
+        </table>
+    </div>
 </body>
 </html>

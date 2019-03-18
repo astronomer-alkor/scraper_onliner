@@ -4,7 +4,7 @@ from pprint import pprint
 
 def create_database_connection():
     client = MongoClient()
-    return client.test12_database
+    return client.full_database
 
 
 db = create_database_connection()
@@ -18,7 +18,7 @@ def get_products_preview():
                                                          'key': 1,
                                                          'category': 1,
                                                          '_id': 0
-                                                         })]
+                                                         })][:20]
 
 
 def get_product_data(product_name):

@@ -29,8 +29,11 @@ def get_data_by_request(url, category):
                 data[key] = item[key].replace('&quot;', '"')
             else:
                 data[key] = item[key]
-        min_price = item['prices']['price_min']['amount']
-        max_price = item['prices']['price_max']['amount']
+        try:
+            min_price = item['prices']['price_min']['amount']
+            max_price = item['prices']['price_max']['amount']
+        except TypeError:
+            yield None
         current_price['price_min'] = min_price
         current_price['price_max'] = max_price
         data['current_price'] = current_price
@@ -88,11 +91,11 @@ def main():
         page_count = get_page_count(base_url, category)
         for url in generate_urls(base_url, category, page_count):
             for data in get_data_by_request(url, category):
+                if data is None:
+                    continue
                 process_product(data)
                 counter += 1
-                print(counter)
-                if counter == 20:
-                    exit()
+                print(counter, 'from', page_count * 30)
 
 
 if __name__ == '__main__':

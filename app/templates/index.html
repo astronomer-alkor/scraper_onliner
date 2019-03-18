@@ -11,7 +11,9 @@
             {% for product in products %}
                 <div class="products_item">
                     <div class="product__image">
-                        <img src="{{product.img_url}}">
+                        <a href="/{{ product.category }}/{{ product.key }}" class="product__link">
+                            <img height="225" width="170" src="{{product.img_url}}">
+                        </a>
                     </div>
                     <div class="product__info">
                         <a href="/{{ product.category }}/{{ product.key }}" class="product__link">
