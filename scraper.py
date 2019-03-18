@@ -33,7 +33,7 @@ def get_data_by_request(url, category):
             min_price = item['prices']['price_min']['amount']
             max_price = item['prices']['price_max']['amount']
         except TypeError:
-            yield None
+            continue
         current_price['price_min'] = min_price
         current_price['price_max'] = max_price
         data['current_price'] = current_price
@@ -45,13 +45,16 @@ def get_data_by_request(url, category):
 
 
 def get_page_count(url, category):
-    return requests.get(f'{url}/{category}?page=1').json()['page']['last']
+    params = {'price[from]': '1.00',
+              'page': 1}
+    return requests.get(f'{url}/{category}?{urlencode(params)}').json()['page']['last']
 
 
 def generate_urls(url, category, page_count):
     for counter in range(1, page_count + 1):
-        page = {'page': counter}
-        yield f'{url}/{category}?{urlencode(page)}'
+        params = {'price[from]': '1.00',
+                  'page': 1}
+        yield f'{url}/{category}?{urlencode(params)}'
 
 
 def parse_catalog_item(url):
@@ -91,11 +94,11 @@ def main():
         page_count = get_page_count(base_url, category)
         for url in generate_urls(base_url, category, page_count):
             for data in get_data_by_request(url, category):
-                if data is None:
-                    continue
                 process_product(data)
                 counter += 1
                 print(counter, 'from', page_count * 30)
+                if counter == 20:
+                    exit()
 
 
 if __name__ == '__main__':

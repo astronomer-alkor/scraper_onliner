@@ -14,7 +14,7 @@
             <div class="product_description">
                 <p class="full_description">{{ product.description}}</p>
                 <div class="product__price">
-                    <span>{{ product.current_price.price_min }}</span>-<span> {{ product.current_price.price_max}}</span>
+                    {{ product.current_price.price_min }} – {{ product.current_price.price_max}}
                 </div>
             </div>
         </div>
@@ -26,7 +26,9 @@
              {% for key, value in rows.items() %}
                  <tr class="table_row">
                      <td class="table_col">{{ key }}</td>
-                     <td class="table_col">{{ value }}</td>
+                     <td class="table_col">
+                         <div>{{ value }}</div>
+                     </td>
                  </tr>
              {% endfor %}
          {% endfor %}
