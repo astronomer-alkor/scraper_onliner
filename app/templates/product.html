@@ -12,7 +12,7 @@
         <h1 class="product_caption">{{ product.name }}</h1>
         <div class="product_block">
             <div class="product_image">
-                <img height="225" width="170" src="{{product.img_url}}" class="product_image__image">
+                <div class="image" style="background-image: url({{ product.img_url }})"></div>
             </div>
             <div class="product_description">
                 <p class="full_description">{{ product.description}}</p>
@@ -21,6 +21,9 @@
                 </div>
             </div>
         </div>
+        {% if product.price|length > 1 %}
+            <div class="price_chart" id="price_chart"></div>
+        {% endif %}
         <table class="product_table">
          {% for title, rows in product.spec.items() %}
               <tr class="table_title">
@@ -42,37 +45,37 @@
              {% endfor %}
          {% endfor %}
         </table>
-        {% if product.price|length > 1 %}
-            <div id="curve_chart" style="width: 900px; height: 500px"></div>
-        {% endif %}
     </div>
-    <script src="https://www.gstatic.com/charts/loader.js"></script>
-    <script>
-        google.charts.load('current', {'packages':['corechart']});
-        google.charts.setOnLoadCallback(drawChart);
+    {% if product.price|length > 1 %}
+        <script src="https://www.gstatic.com/charts/loader.js"></script>
+        <script>
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(drawChart);
 
-        function drawChart() {
-            var data = google.visualization.arrayToDataTable([
-                ['Date', 'Minimum price', 'Maximum price'],
-                {% for date, price in product.price.items() %}
-                    [new Date({{ date.replace('-', ', ') }}), {{ price.price_min }}, {{ price.price_max }}],
-                {% endfor %}
-            ]);
+            function drawChart() {
+                var data = google.visualization.arrayToDataTable([
+                    ['Дата', 'Минимальная цена', 'Максимальная цена'],
+                    {% for date, price in product.price.items() %}
+                        [new Date({{ date.replace('-', ', ') }}), {{ price.price_min }}, {{ price.price_max }}],
+                    {% endfor %}
+                ]);
 
-            var options = {
-              title: 'Price chart',
-              curveType: 'function',
-              legend: { position: 'bottom' },
-              hAxis: {
-                format: 'yyyy-M-d',
-                gridlines: {count: 15}
-              }
-            };
+                var options = {
+                  title: 'График изменения цен',
+                  curveType: 'function',
+                  legend: { position: 'bottom' },
+                  hAxis: {
+                    format: 'd.M.yy',
+                    gridlines: {count: 15}
+                  },
+                  pointSize: 10
+                };
 
-            var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+                var chart = new google.visualization.LineChart(document.getElementById('price_chart'));
 
-            chart.draw(data, options);
-        }
-    </script>
+                chart.draw(data, options);
+            }
+        </script>
+    {% endif %}
 </body>
 </html>
