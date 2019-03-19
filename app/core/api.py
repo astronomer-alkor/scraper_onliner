@@ -27,7 +27,7 @@ def get_page_urls(cur_page, page_count, url):
     for page in range(cur_page - 3, cur_page + 3):
         if 0 < page <= page_count:
             if page != cur_page:
-                urls.append({'page': page, 'url': generate_url(page, url)})
+                urls.append({'page': page, 'url': generate_url(url, page)})
             else:
                 urls.append({'page': page, 'url': None})
     return urls

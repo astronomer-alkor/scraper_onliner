@@ -99,7 +99,7 @@ def main():
                 process_product(data)
                 counter += 1
                 print(counter, 'from', page_count * 30)
-                if counter == 500:
+                if counter == 100:
                     exit()
 
 

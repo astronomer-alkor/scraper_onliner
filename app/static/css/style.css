@@ -149,3 +149,17 @@ p {
     padding: 20px 100px;
     text-align: center;
 }
+
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    max-width: 300px;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+}
+
+.pagination_link {
+    text-decoration: none;
+    color: #000000;
+}
