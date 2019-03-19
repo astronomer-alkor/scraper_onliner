@@ -2,11 +2,11 @@ from urllib.parse import urlencode
 from datetime import datetime
 from bs4 import BeautifulSoup
 import requests
-from app.core.database import db
+from app.core.database import DB
 
 
 def process_product(product):
-    products = db.products
+    products = DB.products
     item = products.find_one({'key': product['key']})
     if not item:
         print('not exist')
@@ -99,8 +99,8 @@ def main():
                 process_product(data)
                 counter += 1
                 print(counter, 'from', page_count * 30)
-                # if counter == 50:
-                #     exit()
+                if counter == 500:
+                    exit()
 
 
 if __name__ == '__main__':

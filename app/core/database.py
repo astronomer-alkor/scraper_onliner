@@ -4,7 +4,7 @@ from pymongo import MongoClient
 
 def create_database_connection():
     client = MongoClient()
-    return client.database11
+    return client.main_database
 
 
 DB = create_database_connection()

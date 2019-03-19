@@ -22,6 +22,17 @@ def generate_url(url, page):
     return urlunparse(parsed_url)
 
 
+def get_page_urls(cur_page, page_count, url):
+    urls = []
+    for page in range(cur_page - 3, cur_page + 3):
+        if 0 < page <= page_count:
+            if page != cur_page:
+                urls.append({'page': page, 'url': generate_url(page, url)})
+            else:
+                urls.append({'page': page, 'url': None})
+    return urls
+
+
 def get_pagination(page, limit, url):
     pages_count = get_product_page_count(limit)
     if page > pages_count:
@@ -31,4 +42,5 @@ def get_pagination(page, limit, url):
         navigation['left'] = generate_url(url, page - 1)
     if page < pages_count:
         navigation['right'] = generate_url(url, page + 1)
+    navigation['pages'] = get_page_urls(page, pages_count, url)
     return navigation

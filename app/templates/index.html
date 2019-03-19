@@ -26,14 +26,17 @@
                 </div>
             {% endfor %}
         </div>
-        <div class="pagination">
+        <ul class="pagination">
             {% if pagination.left%}
-                <a href="{{ pagination.left }}" class="left">назад</a>
+                <li><a href="{{ pagination.left }}" class="left">назад</a></li>
             {% endif %}
+            {% for page in pagination.pages %}
+
+            {% endfor %}
             {% if pagination.right%}
-                <a href="{{ pagination.right }}" class="right">вперед</a>
+                <li><a href="{{ pagination.right }}" class="right">вперед</a></li>
             {% endif %}
-        </div>
+        </ul>
     </div>
 </body>
 </html>
