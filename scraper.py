@@ -25,7 +25,7 @@ def get_data_by_request(url, category):
         data = {}
         current_price = {}
         data['price'] = {}
-        keys = ('id', 'key', 'name', 'description', 'micro_description', 'html_url')
+        keys = ('id', 'key', 'full_name', 'description', 'micro_description', 'html_url')
         for key in keys:
             if isinstance(item[key], str):
                 data[key] = item[key].replace('&quot;', '"')
@@ -99,8 +99,8 @@ def main():
                 process_product(data)
                 counter += 1
                 print(counter, 'from', page_count * 30)
-                if counter == 100:
-                    exit()
+                # if counter == 100:
+                #     exit()
 
 
 if __name__ == '__main__':

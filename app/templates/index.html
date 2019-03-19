@@ -9,6 +9,31 @@
 </head>
 <body>
     <div class="container">
+        <ul class="pagination">
+                {% if pagination.left%}
+                    <li>
+                        <a href="{{ pagination.left }}" class="pagination_link">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                {% endif %}
+                {% for page in pagination.pages %}
+                    <li>
+                        {% if page.url %}
+                            <a href="{{ page.url }}" class="pagination_link">{{ page.page }}</a>
+                        {% else %}
+                            <span class="current_page">{{ page.page }}</span>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+                {% if pagination.right%}
+                    <li>
+                        <a href="{{ pagination.right }}" class="pagination_link">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
         <div class="products">
             {% for product in products %}
                 <div class="products_item">
