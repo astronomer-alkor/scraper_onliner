@@ -152,18 +152,33 @@ p {
 
 .pagination {
     display: flex;
-    justify-content: space-between;
-    max-width: 300px;
-    margin: 0 auto;
+    flex-grow: 1;
+    justify-content: center;
+    max-width: 400px;
+    margin: 20px auto;
     padding: 0;
     list-style: none;
 }
 
+.pagination li {
+    margin-right: 5px;
+}
+
 .pagination_link {
+    padding: 8px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    background: #ffffff;
     color: #000000;
 }
 
+.pagination_link:hover {
+    background: #dddddd;
+    transition: background-color .3s;
+}
+
 .current_page {
-    padding: 7px;
-    background: #0000ff;
+    padding: 8px 12px;
+    border-radius: 5px;
+    background: #4caf50;
 }
