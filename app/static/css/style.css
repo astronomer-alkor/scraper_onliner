@@ -160,6 +160,10 @@ p {
 }
 
 .pagination_link {
-    text-decoration: none;
     color: #000000;
+}
+
+.current_page {
+    padding: 7px;
+    background: #0000ff;
 }

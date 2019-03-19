@@ -40,7 +40,7 @@
                     {% if page.url %}
                         <a href="{{ page.url }}" class="pagination_link">{{ page.page }}</a>
                     {% else %}
-                        {{ page.page }}
+                        <span class="current_page">{{ page.page }}</span>
                     {% endif %}
                 </li>
             {% endfor %}

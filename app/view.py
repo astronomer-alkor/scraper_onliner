@@ -17,6 +17,8 @@ def index():
     url = request.url
     try:
         limit = int(limit)
+        if limit > 50:
+            limit = 50
         page = int(page)
         return render_template('index.html', products=get_products_preview(page=page, limit=limit),
                                pagination=get_pagination(page, limit, url))
