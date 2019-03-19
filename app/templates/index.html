@@ -26,6 +26,14 @@
                 </div>
             {% endfor %}
         </div>
+        <div class="pagination">
+            {% if pagination.left%}
+                <a href="{{ pagination.left }}" class="left">назад</a>
+            {% endif %}
+            {% if pagination.right%}
+                <a href="{{ pagination.right }}" class="right">вперед</a>
+            {% endif %}
+        </div>
     </div>
 </body>
 </html>
