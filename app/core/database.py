@@ -30,5 +30,11 @@ def get_product_page_count(limit):
     return math.ceil(DB.products.count_documents({}) / limit)
 
 
+# def get_vendors(category):
+#     vendors = DB.products.find({'category': category}, {'manufacturer': 1,
+#                                                         '_id': 0})
+#     return set([vendor['manufacturer'] for vendor in vendors])
+
+
 if __name__ == '__main__':
-    pprint(DB.products.find_one({}))
+    pprint(DB.vendors.find_one({}))

@@ -15,6 +15,10 @@ def get_price_by_positions(url):
     return average, median
 
 
+def get_manufacturer(url):
+    return requests.get(url).json()['manufacturer']['name']
+
+
 def process_product(product):
     products = DB.products
     item = products.find_one({'key': product['key']})
@@ -41,6 +45,7 @@ def get_data_by_request(url, category):
                 data[key] = item[key].replace('&quot;', '"')
             else:
                 data[key] = item[key]
+        data['manufacturer'] = get_manufacturer(item['url'])
         try:
             min_price = float(item['prices']['price_min']['amount'])
             max_price = float(item['prices']['price_max']['amount'])
@@ -106,15 +111,19 @@ def parse_catalog_item(url):
 def main():
     base_url = 'https://catalog.api.onliner.by/search'
     categories = ('mobile', )
+    vendors = DB.vendors
     counter = 0
     for category in categories:
+        if not vendors.find_one({'category': category}):
+            vendors.insert_one({'category': category,
+                                'vendors': []})
         page_count = get_page_count(base_url, category)
         for url in generate_urls(base_url, category, page_count):
             for data in get_data_by_request(url, category):
                 process_product(data)
                 counter += 1
                 print(counter, 'from', page_count * 30)
-                if counter == 50:
+                if counter == 10:
                     exit()
 
 

@@ -9,74 +9,16 @@
 </head>
 <body>
     <div class="container">
-        <ul class="pagination">
-                {% if pagination.left%}
-                    <li>
-                        <a href="{{ pagination.left }}" class="pagination_link">
-                            <i class="fas fa-chevron-left"></i>
-                        </a>
-                    </li>
-                {% endif %}
-                {% for page in pagination.pages %}
-                    <li>
-                        {% if page.url %}
-                            <a href="{{ page.url }}" class="pagination_link">{{ page.page }}</a>
-                        {% else %}
-                            <span class="current_page">{{ page.page }}</span>
-                        {% endif %}
-                    </li>
-                {% endfor %}
-                {% if pagination.right%}
-                    <li>
-                        <a href="{{ pagination.right }}" class="pagination_link">
-                            <i class="fas fa-chevron-right"></i>
-                        </a>
-                    </li>
-                {% endif %}
-            </ul>
-        <div class="products">
-            {% for product in products %}
-                <div class="products_item">
-                    <div class="product__image">
-                        <a href="/{{ product.category }}/{{ product.key }}" class="product__link">
-                            <div class="image" style="background-image: url({{ product.img_url }})"></div>
-                        </a>
-                    </div>
-                    <div class="product__info">
-                        <a href="/{{ product.category }}/{{ product.key }}" class="product__link">
-                            <p class="product__name">{{ product.full_name }}</p>
-                        </a>
-                        <p class="product__description">{{ product.description }}</p>
-                        <p class="product__price">от {{ product.current_price.price_min }} руб.</p>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-        <ul class="pagination">
-            {% if pagination.left%}
-                <li>
-                    <a href="{{ pagination.left }}" class="pagination_link">
-                        <i class="fas fa-chevron-left"></i>
-                    </a>
-                </li>
-            {% endif %}
-            {% for page in pagination.pages %}
-                <li>
-                    {% if page.url %}
-                        <a href="{{ page.url }}" class="pagination_link">{{ page.page }}</a>
-                    {% else %}
-                        <span class="current_page">{{ page.page }}</span>
-                    {% endif %}
-                </li>
-            {% endfor %}
-            {% if pagination.right%}
-                <li>
-                    <a href="{{ pagination.right }}" class="pagination_link">
-                        <i class="fas fa-chevron-right"></i>
-                    </a>
-                </li>
-            {% endif %}
-        </ul>
+        <main class="main">
+            <div class="filter">
+                <div class="vendor">Производитель</div>
+            </div>
+            <div class="products_block">
+
+            </div>
+        </main>
     </div>
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="{{ url_for('static', filename='js/render_products.js') }}"></script>
 </body>
 </html>
