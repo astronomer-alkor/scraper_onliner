@@ -2,13 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+          integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <title>{{ product.name }}</title>
 </head>
 <body>
-    <div class="container">
+<div class="wrapper">
+    <div class="container product_container">
         <h1 class="product_caption">{{ product.full_name }}</h1>
         <div class="product_block">
             <div class="product_image">
@@ -22,30 +24,31 @@
             </div>
         </div>
         {% if product.price|length > 1 %}
-            <div class="price_chart" id="price_chart"></div>
+        <div class="price_chart" id="price_chart"></div>
         {% endif %}
         <table class="product_table">
-         {% for title, rows in product.spec.items() %}
-              <tr class="table_title">
-                  <td>{{ title }}</td>
-              </tr>
-             {% for key, value in rows.items() %}
-                 <tr class="table_row">
-                     <td class="table_col">{{ key }}</td>
-                     <td class="table_col">
-                         {% if value == True %}
-                            <i class="fas fa-check fas_green"></i>
-                         {% elif value == False %}
-                             <i class="fas fa-times fas_red"></i>
-                         {% else %}
-                            <div>{{ value }}</div>
-                         {% endif %}
-                     </td>
-                 </tr>
-             {% endfor %}
-         {% endfor %}
+            {% for title, rows in product.spec.items() %}
+            <tr class="table_title">
+                <td>{{ title }}</td>
+            </tr>
+            {% for key, value in rows.items() %}
+            <tr class="table_row">
+                <td class="table_col">{{ key }}</td>
+                <td class="table_col">
+                    {% if value == True %}
+                    <i class="fas fa-check fas_green"></i>
+                    {% elif value == False %}
+                    <i class="fas fa-times fas_red"></i>
+                    {% else %}
+                    <div>{{ value }}</div>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            {% endfor %}
         </table>
     </div>
+</div>
     {% if product.price|length > 1 %}
         <script src="https://www.gstatic.com/charts/loader.js"></script>
         <script>

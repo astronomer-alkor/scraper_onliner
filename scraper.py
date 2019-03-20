@@ -2,7 +2,11 @@ from urllib.parse import urlencode
 from datetime import datetime
 from bs4 import BeautifulSoup
 import requests
-from app.core.database import DB
+from app.core.database import (
+    DB,
+    fill_database_by_category
+)
+from pprint import pprint
 
 
 def get_price_by_positions(url):
@@ -11,7 +15,7 @@ def get_price_by_positions(url):
     for item in items:
         prices.append(float(item['position_price']['amount']))
     average = round(sum(prices) / len(prices), ndigits=1)
-    median = prices[round(len(prices) / 2)]
+    median = sorted(prices)[round(len(prices) / 2)]
     return average, median
 
 
@@ -24,7 +28,7 @@ def process_product(product):
     item = products.find_one({'key': product['key']})
     if not item:
         print('not exist')
-        products.insert_one(product)
+        products.insert(product, check_keys=False)
     else:
         print('exist')
         today = datetime.now().strftime('%Y-%m-%d')
@@ -46,6 +50,8 @@ def get_data_by_request(url, category):
             else:
                 data[key] = item[key]
         data['manufacturer'] = get_manufacturer(item['url'])
+        if data['manufacturer'] not in DB.vendors.find_one({'category': category})['vendors']:
+            DB.vendors.update_one({'category': category}, {'$push': {'vendors': data['manufacturer']}})
         try:
             min_price = float(item['prices']['price_min']['amount'])
             max_price = float(item['prices']['price_max']['amount'])
@@ -110,13 +116,10 @@ def parse_catalog_item(url):
 
 def main():
     base_url = 'https://catalog.api.onliner.by/search'
-    categories = ('mobile', )
-    vendors = DB.vendors
+    categories = ('notebook', 'mobile', )
     counter = 0
     for category in categories:
-        if not vendors.find_one({'category': category}):
-            vendors.insert_one({'category': category,
-                                'vendors': []})
+        fill_database_by_category(category)
         page_count = get_page_count(base_url, category)
         for url in generate_urls(base_url, category, page_count):
             for data in get_data_by_request(url, category):

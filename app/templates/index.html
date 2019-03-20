@@ -2,23 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+          integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <title>Scraper</title>
 </head>
 <body>
+<div class="wrapper">
     <div class="container">
-        <main class="main">
-            <div class="filter">
-                <div class="vendor">Производитель</div>
+        <div class="filter">
+            <div class="filter_fieldset">
+                <div class="filter_fieldset__label">Производитель</div>
+                <div class="filter_block">
+                    <ul class="filter_fields">
+                    {% for vendor in vendors %}
+                        <li>{{ vendor }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
             </div>
-            <div class="products_block">
+        </div>
+        <div class="products_block">
 
-            </div>
-        </main>
+        </div>
     </div>
-    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
-    <script src="{{ url_for('static', filename='js/render_products.js') }}"></script>
+</div>
+<div class="preloader-wrapper">
+    <div id="cube-loader">
+        <div class="caption">
+            <div class="cube-loader">
+                <div class="cube loader-1"></div>
+                <div class="cube loader-2"></div>
+                <div class="cube loader-4"></div>
+                <div class="cube loader-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+<script src="{{ url_for('static', filename='js/render_products.js') }}"></script>
 </body>
 </html>
