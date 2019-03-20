@@ -1,5 +1,6 @@
 import math
 from pymongo import MongoClient
+from pprint import pprint
 
 
 def create_database_connection():
@@ -12,7 +13,7 @@ DB = create_database_connection()
 
 def get_products_preview(page=1, limit=30):
     skip = (page - 1) * limit
-    return DB.products.find({}, {'name': 1,
+    return DB.products.find({}, {'full_name': 1,
                                  'description': 1,
                                  'img_url': 1,
                                  'current_price': 1,
@@ -30,4 +31,4 @@ def get_product_page_count(limit):
 
 
 if __name__ == '__main__':
-    print(get_product_page_count(30))
+    pprint(DB.products.find_one({}))

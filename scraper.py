@@ -5,6 +5,16 @@ import requests
 from app.core.database import DB
 
 
+def get_price_by_positions(url):
+    items = requests.get(url).json()['positions']['primary']
+    prices = []
+    for item in items:
+        prices.append(float(item['position_price']['amount']))
+    average = round(sum(prices) / len(prices), ndigits=1)
+    median = prices[round(len(prices) / 2)]
+    return average, median
+
+
 def process_product(product):
     products = DB.products
     item = products.find_one({'key': product['key']})
@@ -32,17 +42,22 @@ def get_data_by_request(url, category):
             else:
                 data[key] = item[key]
         try:
-            min_price = item['prices']['price_min']['amount']
-            max_price = item['prices']['price_max']['amount']
+            min_price = float(item['prices']['price_min']['amount'])
+            max_price = float(item['prices']['price_max']['amount'])
         except TypeError:
             continue
+        today = datetime.now().strftime('%Y-%m-%d')
+        average, median = get_price_by_positions(item['prices']['url'])
+        current_price['price_average'] = average
+        current_price['price_median'] = median
         current_price['price_min'] = min_price
         current_price['price_max'] = max_price
         data['current_price'] = current_price
-        data['price'][datetime.now().strftime('%Y-%m-%d')] = current_price
+        data['price'][today] = current_price
         data['img_url'] = ''.join(('https:', item['images']['header']))
         data['category'] = category
-        data['spec'] = parse_catalog_item(data['html_url'])
+        if not DB.products.find_one({'key': data['key']}):
+            data['spec'] = parse_catalog_item(data['html_url'])
         yield data
 
 
@@ -99,8 +114,8 @@ def main():
                 process_product(data)
                 counter += 1
                 print(counter, 'from', page_count * 30)
-                # if counter == 100:
-                #     exit()
+                if counter == 50:
+                    exit()
 
 
 if __name__ == '__main__':

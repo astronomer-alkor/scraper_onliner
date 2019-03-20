@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="product_caption">{{ product.name }}</h1>
+        <h1 class="product_caption">{{ product.full_name }}</h1>
         <div class="product_block">
             <div class="product_image">
                 <div class="image" style="background-image: url({{ product.img_url }})"></div>
@@ -54,9 +54,10 @@
 
             function drawChart() {
                 var data = google.visualization.arrayToDataTable([
-                    ['Дата', 'Минимальная цена', 'Максимальная цена'],
+                    ['Дата', 'Минимальная цена', 'Максимальная цена', 'Средняя цена', 'Медианная цена'],
                     {% for date, price in product.price.items() %}
-                        [new Date({{ date.replace('-', ', ') }}), {{ price.price_min }}, {{ price.price_max }}],
+                        [new Date({{ date.replace('-', ', ') }}), {{ price.price_min }}, {{ price.price_max }},
+                        {{ price.price_average }}, {{ price.price_median }}],
                     {% endfor %}
                 ]);
 
