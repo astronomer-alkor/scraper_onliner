@@ -6,7 +6,6 @@ from app.core.database import (
     DB,
     fill_database_by_category
 )
-from pprint import pprint
 
 
 def get_price_by_positions(url):

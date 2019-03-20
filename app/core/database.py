@@ -50,5 +50,4 @@ def fill_database_by_category(category):
 
 
 if __name__ == '__main__':
-    # pprint(DB.vendors.find_one({}))
-    print(get_vendors_by_category('notebook'))
+    pprint(DB.vendors.find_one({}))
