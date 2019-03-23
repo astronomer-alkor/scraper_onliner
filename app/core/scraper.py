@@ -1,4 +1,7 @@
-from urllib.parse import urlencode
+from urllib.parse import (
+    urlencode,
+    urlparse
+)
 from datetime import datetime
 from bs4 import BeautifulSoup
 import requests
@@ -16,6 +19,10 @@ def get_price_by_positions(url):
     average = round(sum(prices) / len(prices), ndigits=1)
     median = sorted(prices)[round(len(prices) / 2)]
     return average, median
+
+
+def get_category_by_url(url):
+    return urlparse(url).path.replace('/', '')
 
 
 def get_manufacturer(url):
@@ -113,9 +120,36 @@ def parse_catalog_item(url):
     return data
 
 
+def get_categories_structure(url):
+    html = requests.get(url).text
+    soup = BeautifulSoup(html, 'lxml')
+    base_category_names = [category.text.replace('\xa0', ' ') for category in
+                           soup.find_all('span', class_='catalog-navigation-classifier__item-title-wrapper')]
+    base_categories_blocks = soup.find_all('div', class_='catalog-navigation-list__category')
+    base_categories = {}
+    for base_category_name, base_category_block in zip(base_category_names, base_categories_blocks):
+        subcategories = {}
+        subcategory_blocks = base_category_block.find_all('div', class_='catalog-navigation-list__aside-item')
+        for subcategory_block in subcategory_blocks:
+            subcategory_name = subcategory_block.find('div', class_='catalog-navigation-list__aside-title').\
+                text.strip().replace('\xa0', ' ')
+            category_blocks = subcategory_block.find_all('a', class_='catalog-navigation-list__dropdown-item')
+            categories = {}
+            for category_block in category_blocks:
+                category_name = get_category_by_url(category_block.get('href'))
+                categories[category_name] = {}
+                categories[category_name]['name'] = category_block.find(
+                    'span', class_='catalog-navigation-list__dropdown-title').text.strip().replace('\xa0', ' ')
+                categories[category_name]['img_url'] = category_block.find(
+                    'span', class_='catalog-navigation-list__dropdown-image').get('style').split(
+                    'url(//')[-1].replace(');', '')
+            subcategories[subcategory_name] = categories
+        base_categories[base_category_name] = subcategories
+
+
 def main():
     base_url = 'https://catalog.api.onliner.by/search'
-    categories = ('notebook', 'mobile', )
+    categories = ('mobile', 'notebook')
     counter = 0
     for category in categories:
         fill_database_by_category(category)
@@ -130,4 +164,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    # main()
+    get_categories('https://catalog.onliner.by/')

@@ -11,9 +11,12 @@ def create_database_connection():
 DB = create_database_connection()
 
 
-def get_products_preview(category, page=1, limit=30):
+def get_products_preview(category, fields=None, page=1, limit=30):
+    if fields is None:
+        fields = {}
     skip = (page - 1) * limit
-    return DB.products.find({'category': category},
+    return DB.products.find({'category': category,
+                             **fields},
                             {'full_name': 1,
                              'description': 1,
                              'img_url': 1,
@@ -36,8 +39,8 @@ def check_category(category):
 
 
 def get_vendors_by_category(category):
-    return DB.vendors.find({'category': category}, {'_id': 0,
-                                                    'vendors': 1})[0]['vendors']
+    return DB.vendors.find_one({'category': category}, {'_id': 0,
+                                                        'vendors': 1})['vendors']
 
 
 def fill_database_by_category(category):
@@ -49,5 +52,13 @@ def fill_database_by_category(category):
                                'vendors': []})
 
 
+def parse_data(data):
+    ans = {}
+    for key, value in data.items():
+        if isinstance(value, list):
+            ans[key] = {'$in': value}
+    return ans
+
+
 if __name__ == '__main__':
-    pprint(DB.vendors.find_one({}))
+    pprint(DB.products.find_one({}))

@@ -8,16 +8,21 @@ from app.core.database import (
     get_products_preview,
     get_product_data,
     check_category,
-    get_vendors_by_category
+    get_vendors_by_category,
+    parse_data
 )
 from app.core.api import (
     get_pagination,
     update_query_params
 )
+import json
+import time
 
 
 @APP.route('/categories/<category>/', methods=['GET', 'POST'])
 def catalog(category):
+    if request.method == 'POST':
+        pass
     try:
         if not check_category(category):
             raise ValueError
@@ -31,12 +36,14 @@ def catalog(category):
         return render_template('404.html')
     url = request.url
     if limit < 10 or limit > 50:
-        return redirect(update_query_params(url, limit=30))
+        limit = 30
     if request.method == 'POST':
+        data = parse_data(request.get_json())
+        time.sleep(1)
         return render_template('products.html',
-                               products=get_products_preview(category, page=page, limit=limit),
-                               pagination=get_pagination(page, limit, url, category=category))
-    return render_template('index.html', vendors=get_vendors_by_category(category))
+                               products=get_products_preview(category, fields=data, page=page, limit=limit),
+                               pagination=get_pagination(page, limit, url, category=category, **data))
+    return render_template('catalog.html', vendors=get_vendors_by_category(category), category=category)
 
 
 @APP.route('/<category>/<product_name>')
