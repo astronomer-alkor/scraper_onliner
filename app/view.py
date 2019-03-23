@@ -1,6 +1,6 @@
+import time
 from flask import (
     render_template,
-    redirect,
     request
 )
 from app.application import APP
@@ -12,11 +12,13 @@ from app.core.database import (
     parse_data
 )
 from app.core.api import (
-    get_pagination,
-    update_query_params
+    get_pagination
 )
-import json
-import time
+
+
+@APP.route('/')
+def index():
+    pass
 
 
 @APP.route('/categories/<category>/', methods=['GET', 'POST'])

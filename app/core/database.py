@@ -1,6 +1,6 @@
 import math
-from pymongo import MongoClient
 from pprint import pprint
+from pymongo import MongoClient
 
 
 def create_database_connection():

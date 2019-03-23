@@ -142,7 +142,7 @@ def get_categories_structure(url):
                     'span', class_='catalog-navigation-list__dropdown-title').text.strip().replace('\xa0', ' ')
                 categories[category_name]['img_url'] = category_block.find(
                     'span', class_='catalog-navigation-list__dropdown-image').get('style').split(
-                    'url(//')[-1].replace(');', '')
+                        'url(//')[-1].replace(');', '')
             subcategories[subcategory_name] = categories
         base_categories[base_category_name] = subcategories
 
@@ -164,5 +164,4 @@ def main():
 
 
 if __name__ == '__main__':
-    # main()
-    get_categories('https://catalog.onliner.by/')
+    main()
