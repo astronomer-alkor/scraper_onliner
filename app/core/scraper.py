@@ -1,13 +1,15 @@
 from urllib.parse import (
     urlencode,
-    urlparse
+    urlparse,
+    urljoin
 )
 from datetime import datetime
+from pprint import pprint
 from bs4 import BeautifulSoup
 import requests
 from app.core.database import (
     DB,
-    fill_database_by_category
+    get_list_categories
 )
 
 
@@ -56,8 +58,8 @@ def get_data_by_request(url, category):
             else:
                 data[key] = item[key]
         data['manufacturer'] = get_manufacturer(item['url'])
-        if data['manufacturer'] not in DB.vendors.find_one({'category': category})['vendors']:
-            DB.vendors.update_one({'category': category}, {'$push': {'vendors': data['manufacturer']}})
+        if data['manufacturer'] not in DB.categories.find_one({'category': category})['vendors']:
+            DB.categories.update_one({'category': category}, {'$push': {'vendors': data['manufacturer']}})
         try:
             min_price = float(item['prices']['price_min']['amount'])
             max_price = float(item['prices']['price_max']['amount'])
@@ -120,13 +122,14 @@ def parse_catalog_item(url):
     return data
 
 
-def get_categories_structure(url):
+def get_categories_structure(url='https://catalog.onliner.by/'):
     html = requests.get(url).text
     soup = BeautifulSoup(html, 'lxml')
     base_category_names = [category.text.replace('\xa0', ' ') for category in
                            soup.find_all('span', class_='catalog-navigation-classifier__item-title-wrapper')]
     base_categories_blocks = soup.find_all('div', class_='catalog-navigation-list__category')
     base_categories = {}
+    category_names = []
     for base_category_name, base_category_block in zip(base_category_names, base_categories_blocks):
         subcategories = {}
         subcategory_blocks = base_category_block.find_all('div', class_='catalog-navigation-list__aside-item')
@@ -137,30 +140,38 @@ def get_categories_structure(url):
             categories = {}
             for category_block in category_blocks:
                 category_name = get_category_by_url(category_block.get('href'))
+                category_names.append(category_name)
                 categories[category_name] = {}
                 categories[category_name]['name'] = category_block.find(
                     'span', class_='catalog-navigation-list__dropdown-title').text.strip().replace('\xa0', ' ')
-                categories[category_name]['img_url'] = category_block.find(
+                categories[category_name]['img_url'] = ''.join(('https:', category_block.find(
                     'span', class_='catalog-navigation-list__dropdown-image').get('style').split(
-                        'url(//')[-1].replace(');', '')
+                        'url(')[-1].replace(');', '')))
+                categories[category_name]['url'] = urljoin('/categories/', category_name)
             subcategories[subcategory_name] = categories
         base_categories[base_category_name] = subcategories
+    DB.categories_structure.insert_one({'structure': base_categories})
+    DB.categories.insert_many([{'category': category,
+                                'vendors': []} for category in category_names])
+
+
+def parse_category(base_url, category):
+    counter = 0
+    page_count = get_page_count(base_url, category)
+    for url in generate_urls(base_url, category, page_count):
+        for data in get_data_by_request(url, category):
+            process_product(data)
+            counter += 1
+            print(counter, 'from', page_count * 30)
+            if counter == 10:
+                exit()
 
 
 def main():
     base_url = 'https://catalog.api.onliner.by/search'
-    categories = ('mobile', 'notebook')
-    counter = 0
+    categories = get_list_categories()
     for category in categories:
-        fill_database_by_category(category)
-        page_count = get_page_count(base_url, category)
-        for url in generate_urls(base_url, category, page_count):
-            for data in get_data_by_request(url, category):
-                process_product(data)
-                counter += 1
-                print(counter, 'from', page_count * 30)
-                if counter == 10:
-                    exit()
+        parse_category(base_url, category)
 
 
 if __name__ == '__main__':

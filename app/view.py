@@ -9,16 +9,16 @@ from app.core.database import (
     get_product_data,
     check_category,
     get_vendors_by_category,
-    parse_data
+    parse_data,
+    get_categories_structure,
+    get_one_product_by_category
 )
-from app.core.api import (
-    get_pagination
-)
+from app.core.api import get_pagination
 
 
 @APP.route('/')
 def index():
-    pass
+    return render_template('index.html', structure=get_categories_structure())
 
 
 @APP.route('/categories/<category>/', methods=['GET', 'POST'])
@@ -26,7 +26,7 @@ def catalog(category):
     if request.method == 'POST':
         pass
     try:
-        if not check_category(category):
+        if not check_category(category) or not get_one_product_by_category(category):
             raise ValueError
         if set(request.args.keys()) - {'page', 'limit'}:
             raise ValueError

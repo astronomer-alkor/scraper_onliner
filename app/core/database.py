@@ -11,6 +11,10 @@ def create_database_connection():
 DB = create_database_connection()
 
 
+def get_one_product_by_category(category):
+    return DB.products.find_one({'category': category})
+
+
 def get_products_preview(category, fields=None, page=1, limit=30):
     if fields is None:
         fields = {}
@@ -39,17 +43,8 @@ def check_category(category):
 
 
 def get_vendors_by_category(category):
-    return DB.vendors.find_one({'category': category}, {'_id': 0,
-                                                        'vendors': 1})['vendors']
-
-
-def fill_database_by_category(category):
-    if not DB.categories.find_one({'category': category}):
-        DB.categories.insert_one({'category': category})
-
-    if not DB.vendors.find_one({'category': category}):
-        DB.vendors.insert_one({'category': category,
-                               'vendors': []})
+    return DB.categories.find_one({'category': category}, {'_id': 0,
+                                                           'vendors': 1})['vendors']
 
 
 def parse_data(data):
@@ -60,5 +55,15 @@ def parse_data(data):
     return ans
 
 
+def get_list_categories():
+    return [category['category'] for category in DB.categories.find({}, {'_id': 0,
+                                                                         'category': 1})]
+
+
+def get_categories_structure():
+    return DB.categories_structure.find_one({}, {'_id': 0})['structure']
+
+
 if __name__ == '__main__':
-    pprint(DB.products.find_one({}))
+    # pprint(DB.categories.find_one({}))
+    print(get_categories_structure())

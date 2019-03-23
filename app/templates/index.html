@@ -2,9 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>Scraper</title>
 </head>
 <body>
-
+<div class="wrapper main_wrapper">
+    <div class="container product_container">
+        <div class="main_categories">
+            <ul class="main_categories_list">
+                {% for main_category_name in structure%}
+                <li>
+                    <button class="main_category_button" name="{{ main_category_name }}">{{ main_category_name }}
+                    </button>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% for main_category_name, main_category in structure.items() %}
+        <div class="main_category" id="{{ main_category_name }}">
+            {% for subcategory_name, subcategory in main_category.items() %}
+            <div class="subcategory">
+                <div class="subcategory__title">{{ subcategory_name }}</div>
+                <div class="subcategory_block">
+                    {% for item_block in subcategory.values() %}
+                    <div class="product_item">
+                        <a href="{{ item_block.url }}" class="product_url">
+                            <div class="product_item_image" style="background-image: url('{{ item_block.img_url }}')"></div>
+                            <div class="product_name">{{ item_block.name }}</div>
+                        </a>
+                    </div>
+                    {% endfor%}
+                </div>
+            </div>
+            {% endfor%}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+<script src="{{ url_for('static', filename='js/categories.js') }}"></script>
 </body>
 </html>
