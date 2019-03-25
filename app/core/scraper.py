@@ -36,8 +36,6 @@ def manage_proxies(func):
 def get_response_use_proxy(url, proxies):
     while True:
         if proxies:
-            if len(proxies) > 20:
-                proxies.pop(0)
             for proxy in proxies:
                 try:
                     response = requests.get(url, proxies={**proxy}, timeout=2)
@@ -58,7 +56,7 @@ def get_response_use_proxy(url, proxies):
             return response, proxies
 
 
-def get_response(url, use_proxy=False):
+def get_response(url, use_proxy=True):
     if use_proxy:
         return get_response_use_proxy(url)
     return requests.get(url)
@@ -218,7 +216,7 @@ def parse_category(category):
 
 
 def parse_categories(categories):
-    pool = ThreadPool(1)
+    pool = ThreadPool(20)
     pool.map(parse_category, categories)
 
 

@@ -53,7 +53,7 @@ def get_page_urls(cur_page, page_count, url):
 
 def get_pagination(page, limit, url, **filters):
     pages_count = get_product_page_count(limit, filters)
-    if page > pages_count:
+    if page > pages_count and page > 1:
         raise ValueError
     navigation = {}
     if page > 1:

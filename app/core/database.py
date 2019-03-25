@@ -49,9 +49,19 @@ def get_vendors_by_category(category):
 
 def parse_data(data):
     ans = {}
-    for key, value in data.items():
-        if isinstance(value, list):
-            ans[key] = {'$in': value}
+    for category, filters in data.items():
+        for key, value in filters.items():
+            if category == 'single':
+                if isinstance(value, list):
+                    ans[key] = {'$in': value}
+            elif category == 'ranges':
+                if value:
+                    ans[key] = {}
+                    for k, v in value.items():
+                        if k == 'from':
+                            ans[key]['$gte'] = float(v)
+                        elif k == 'to':
+                            ans[key]['$lte'] = float(v)
     return ans
 
 
@@ -65,5 +75,4 @@ def get_categories_structure():
 
 
 if __name__ == '__main__':
-    pprint(DB.products.find_one({}))
-    # print(get_categories_structure())
+    pprint(DB.products.find_one({'current_price.price_min': {}}))

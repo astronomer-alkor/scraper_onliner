@@ -17,14 +17,30 @@ function get_products(url='', data={}) {
 
 function get_filters() {
     let data = {};
+    data['single'] = {};
     let fields = $('input.field:checked');
     for (let i = 0; i < fields.length; i++) {
         let key = $(fields[i]).attr('about');
         let value = $(fields[i]).attr('name');
-        if (!(key in data)) {
-            data[key] = [];
+        if (!(key in data['single'])) {
+            data['single'][key] = [];
         }
-        data[key].push(value);
+        data['single'][key].push(value);
+    }
+    data['ranges'] = {};
+    let pairs = $('.filter_fields_range');
+    for (let i = 0; i < pairs.length; i++) {
+        let item = $(pairs[i]);
+        data['ranges'][item.attr('about')] = {};
+        let ranges = item.find('input');
+        data['ranges'][item.attr('about')] = {};
+        for (let j = 0; j < ranges.length; j++) {
+            let value = $(ranges[j]);
+            let key = value.attr('name');
+            if (value.val()) {
+                data['ranges'][item.attr('about')][key] = value.val();
+            }
+        }
     }
     console.log(data);
     return data
@@ -36,7 +52,13 @@ $(document).ready(function () {
 });
 
 
-$('input.field').change(function() {
+$('input.field').on('change', function() {
+    let data = get_filters();
+    get_products('', data);
+
+});
+
+$('input.field_range').on('keyup', function() {
     let data = get_filters();
     get_products('', data);
 

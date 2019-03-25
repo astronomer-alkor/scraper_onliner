@@ -23,8 +23,6 @@ def index():
 
 @APP.route('/categories/<category>/', methods=['GET', 'POST'])
 def catalog(category):
-    if request.method == 'POST':
-        pass
     try:
         if not check_category(category) or not get_one_product_by_category(category):
             raise ValueError
@@ -42,8 +40,10 @@ def catalog(category):
     if request.method == 'POST':
         data = parse_data(request.get_json())
         time.sleep(1)
-        return render_template('products.html',
-                               products=get_products_preview(category, fields=data, page=page, limit=limit),
+        products = list(get_products_preview(category, fields=data, page=page, limit=limit))
+        if not products:
+            return 'К сожалению, по вашему запросу не нашлось продуктов.\n Пожалуйста, измените критерии поиска'
+        return render_template('products.html', products=products,
                                pagination=get_pagination(page, limit, url, category=category, **data))
     return render_template('catalog.html', vendors=get_vendors_by_category(category), category=category)
 

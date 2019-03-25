@@ -31,9 +31,13 @@
             <div class="filter_fieldset">
                 <div class="filter_fieldset__label">Минимальная цена</div>
                 <div class="filter_block">
-                    <ul class="filter_fields_range">
-                        <li><input type="text" placeholder="от" name="from"></li>
-                        <li><input type="text" placeholder="до"></li>
+                    <ul class="filter_fields_range" about="current_price.price_min">
+                        <li>
+                            <input class="field_range" type="number" placeholder="от" name="from">
+                        </li>
+                        <li>
+                            <input class="field_range" type="number" placeholder="до" name="to">
+                        </li>
                     </ul>
                 </div>
             </div>
