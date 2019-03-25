@@ -65,5 +65,5 @@ def get_categories_structure():
 
 
 if __name__ == '__main__':
-    # pprint(DB.categories.find_one({}))
-    print(get_categories_structure())
+    pprint(DB.products.find_one({}))
+    # print(get_categories_structure())

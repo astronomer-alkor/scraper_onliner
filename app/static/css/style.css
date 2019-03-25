@@ -421,6 +421,13 @@ ul {
     background: #f3f3f3;
 }
 
+.real_url {
+    display: block;
+    margin-top: 5px;
+    font-size: 18px;
+    text-decoration: none;
+    color: #0000ff;
+}
 
 
 
