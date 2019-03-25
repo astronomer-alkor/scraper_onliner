@@ -57,7 +57,7 @@
             google.charts.setOnLoadCallback(drawChart);
 
             function drawChart() {
-                var data = google.visualization.arrayToDataTable([
+                let data = google.visualization.arrayToDataTable([
                     ['Дата', 'Минимальная', 'Максимальная', 'Средняя', 'Медианная'],
                     {% for date, price in product.price.items() %}
                         [new Date({{ date.replace('-', ', ') }}), {{ price.price_min }}, {{ price.price_max }},
@@ -65,7 +65,7 @@
                     {% endfor %}
                 ]);
 
-                var options = {
+                let options = {
                   title: 'График изменения цен',
                   curveType: 'function',
                   legend: { position: 'bottom' },
@@ -76,7 +76,7 @@
                   pointSize: 10
                 };
 
-                var chart = new google.visualization.LineChart(document.getElementById('price_chart'));
+                let chart = new google.visualization.LineChart(document.getElementById('price_chart'));
 
                 chart.draw(data, options);
             }

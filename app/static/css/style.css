@@ -236,7 +236,6 @@ ul {
 
 .filter_block {
     max-height: 300px;
-    overflow-y: scroll;
 }
 
 .checkbox_item {
@@ -428,6 +427,38 @@ ul {
     text-decoration: none;
     color: #0000ff;
 }
+
+.filter_fieldset {
+    margin-bottom: 10px;
+}
+
+.filter_fields_range {
+    display: flex;
+    padding: 0;
+}
+
+.filter_fields_range li {
+    width: 30%;
+}
+
+.filter_fields_range input {
+    width: 100%;
+}
+
+.filter_fields_range li:first-child {
+    margin-right: 10%;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 

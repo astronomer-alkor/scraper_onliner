@@ -16,9 +16,9 @@ function get_products(url='', data={}) {
 }
 
 function get_filters() {
-    var data = {};
+    let data = {};
     let fields = $('input.field:checked');
-    for (i = 0; i < fields.length; i++) {
+    for (let i = 0; i < fields.length; i++) {
         let key = $(fields[i]).attr('about');
         let value = $(fields[i]).attr('name');
         if (!(key in data)) {
@@ -26,6 +26,7 @@ function get_filters() {
         }
         data[key].push(value);
     }
+    console.log(data);
     return data
 }
 

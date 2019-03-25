@@ -21,7 +21,19 @@ from app.core.database import (
 COLLECTOR = create_collector('collector', 'https')
 
 
-def get_response(url, proxies=[]):
+def manage_proxies(func):
+    proxies = []
+
+    def wrapper(*args, **kwargs):
+        nonlocal proxies
+        response, new_proxies = func(*args, proxies, **kwargs)
+        proxies = new_proxies
+        return response
+    return wrapper
+
+
+@manage_proxies
+def get_response_use_proxy(url, proxies):
     while True:
         if proxies:
             if len(proxies) > 20:
@@ -30,7 +42,7 @@ def get_response(url, proxies=[]):
                 try:
                     response = requests.get(url, proxies={**proxy}, timeout=2)
                     if response.status_code == 200:
-                        return response
+                        return response, proxies
                 except (ConnectTimeout, ProxyError):
                     continue
             else:
@@ -43,7 +55,13 @@ def get_response(url, proxies=[]):
             continue
         if response.status_code == 200:
             proxies.append(proxy)
-            return response
+            return response, proxies
+
+
+def get_response(url, use_proxy=False):
+    if use_proxy:
+        return get_response_use_proxy(url)
+    return requests.get(url)
 
 
 def get_price_by_positions(url):
@@ -195,10 +213,12 @@ def parse_category(category):
             process_product(data)
             counter += 1
             print(category, counter, 'from', page_count * 30)
+            if counter == 10:
+                exit()
 
 
 def parse_categories(categories):
-    pool = ThreadPool(20)
+    pool = ThreadPool(1)
     pool.map(parse_category, categories)
 
 
@@ -209,4 +229,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    # get_response('https://catalog.onliner.by/')
