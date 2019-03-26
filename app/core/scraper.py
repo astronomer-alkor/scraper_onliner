@@ -43,8 +43,7 @@ def get_response_use_proxy(url, proxies):
                         return response, proxies
                 except (ConnectTimeout, ProxyError):
                     continue
-            else:
-                proxies.clear()
+            proxies.clear()
         proxy = COLLECTOR.get_proxy()
         proxy = {proxy.type: ':'.join((proxy.host, proxy.port))}
         try:
@@ -90,6 +89,17 @@ def process_product(product):
         if today not in item['price']:
             products.update_one({'key': product['key']}, {'$set': {f'price.{today}': product['price'][today],
                                                                    'current_price': product['price'][today]}})
+
+
+def get_price_by_category(product_category):
+    today = datetime.now().strftime('%Y-%m-%d')
+    category = DB.categories.find_one({'category': product_category})
+    if today not in category['price']:
+        data = [item['current_price'] for item in DB.products.find({'category': product_category})]
+        category_price_average = round(sum([item['price_average'] for item in data]) / len(data), ndigits=1)
+        category_price_median = round(sum([item['price_median'] for item in data]) / len(data), ndigits=1)
+        data = {'price_average': category_price_average, 'price_median': category_price_median}
+        DB.categories.update_one({'category': product_category}, {'$set': {f'price.{today}': data}})
 
 
 def get_data_by_request(url, category):
@@ -201,7 +211,8 @@ def get_categories_structure(url='https://catalog.onliner.by/'):
         base_categories[base_category_name] = subcategories
     DB.categories_structure.insert_one({'structure': base_categories})
     DB.categories.insert_many([{'category': category,
-                                'vendors': []} for category in category_names])
+                                'vendors': [],
+                                'price': {}} for category in set(category_names)])
 
 
 def parse_category(category):
@@ -215,6 +226,7 @@ def parse_category(category):
             print(category, counter, 'from', page_count * 30)
             if counter == 10:
                 return
+    get_price_by_category(category)
 
 
 def parse_categories(categories):
