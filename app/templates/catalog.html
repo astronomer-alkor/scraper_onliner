@@ -41,6 +41,21 @@
                     </ul>
                 </div>
             </div>
+            <div class="filter_fieldset">
+                <div class="filter_fieldset__label">Дата выхода</div>
+                <div class="filter_block">
+                    <ul class="filter_fields_range" about="spec.Общая информация.Дата выхода на рынок">
+                        <li>
+                            <input id="datepicker" class="field_range field_date_js" type="text"
+                                   placeholder="от" name="from" autocomplete="off">
+                        </li>
+                        <li>
+                            <input id="datepicker" class="field_range field_date_js" type="text"
+                                   placeholder="до" name="to" autocomplete="off">
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
         <div class="products_block">
         </div>
@@ -59,6 +74,7 @@
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <script src="{{ url_for('static', filename='js/render_products.js') }}"></script>
 </body>
 </html>

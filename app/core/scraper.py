@@ -56,7 +56,7 @@ def get_response_use_proxy(url, proxies):
             return response, proxies
 
 
-def get_response(url, use_proxy=True):
+def get_response(url, use_proxy=False):
     if use_proxy:
         return get_response_use_proxy(url)
     return requests.get(url)
@@ -164,6 +164,8 @@ def parse_catalog_item(url):
                     value = False
             except IndexError:
                 continue
+            if key == 'Дата выхода на рынок':
+                value = int(value.replace(' г.', ''))
             table_data[key] = value
         data[table_header] = table_data
     return data
@@ -212,11 +214,11 @@ def parse_category(category):
             counter += 1
             print(category, counter, 'from', page_count * 30)
             if counter == 10:
-                exit()
+                return
 
 
 def parse_categories(categories):
-    pool = ThreadPool(20)
+    pool = ThreadPool(1)
     pool.map(parse_category, categories)
 
 

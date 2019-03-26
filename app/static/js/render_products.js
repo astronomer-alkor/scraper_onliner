@@ -1,4 +1,4 @@
-function get_products(url='', data={}) {
+function get_products(url = '', data = {}) {
     let preloader = $('.preloader-wrapper');
     preloader.addClass('preloader-wrapper_run');
     $('.products_block').html('');
@@ -14,6 +14,7 @@ function get_products(url='', data={}) {
 
     });
 }
+
 
 function get_filters() {
     let data = {};
@@ -49,19 +50,41 @@ function get_filters() {
 $(document).ready(function () {
     let url = $(location).attr('href');
     get_products(url, {});
+    $(function () {
+        $('.field_date_js').datepicker({
+            changeYear: true,
+            // showButtonPanel: true,
+            dateFormat: 'yy',
+            autoclose: true,
+            onClose: function (dateText, inst) {
+                var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+                $(this).datepicker('setDate', new Date(year, 1));
+                let data = get_filters();
+                get_products('', data);
+            }
+        });
+        $(".date-picker-year").focus(function () {
+            $(".ui-datepicker-month").hide();
+        });
+    });
 });
 
 
-$('input.field').on('change', function() {
+$('input.field').on('change', function () {
     let data = get_filters();
     get_products('', data);
-
 });
 
-$('input.field_range').on('keyup', function() {
+
+$('input.field_date_js').focusout( function () {
     let data = get_filters();
     get_products('', data);
+});
 
+
+$('input.field_range').on('keyup', function () {
+    let data = get_filters();
+    get_products('', data);
 });
 
 
