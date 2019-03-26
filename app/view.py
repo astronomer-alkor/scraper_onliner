@@ -54,7 +54,8 @@ def catalog(category):
 
 @APP.route('/<category>/<product_name>')
 def product(category, product_name):
-    return render_template('product.html', product=get_product_data(product_name))
+    return render_template('product.html', product=get_product_data(product_name),
+                           prev_url=request.headers.get("Referer"))
 
 
 @APP.errorhandler(404)
