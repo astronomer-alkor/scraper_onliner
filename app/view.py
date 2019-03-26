@@ -11,7 +11,8 @@ from app.core.database import (
     get_vendors_by_category,
     parse_data,
     get_categories_structure,
-    get_one_product_by_category
+    get_one_product_by_category,
+    get_prices_by_category
 )
 from app.core.api import get_pagination
 
@@ -43,9 +44,12 @@ def catalog(category):
         products = list(get_products_preview(category, fields=data, page=page, limit=limit))
         if not products:
             return 'К сожалению, по вашему запросу не нашлось продуктов.\n Пожалуйста, измените критерии поиска'
+
         return render_template('products.html', products=products,
                                pagination=get_pagination(page, limit, url, category=category, **data))
-    return render_template('catalog.html', vendors=get_vendors_by_category(category), category=category)
+
+    return render_template('catalog.html', vendors=get_vendors_by_category(category), category=category,
+                           prices=get_prices_by_category(category))
 
 
 @APP.route('/<category>/<product_name>')

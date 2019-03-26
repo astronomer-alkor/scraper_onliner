@@ -56,6 +56,9 @@
                     </ul>
                 </div>
             </div>
+            <div class="graphic_button">
+                <button>показать график</button>
+            </div>
         </div>
         <div class="products_block">
         </div>
@@ -72,9 +75,41 @@
                 </div>
             </div>
     </div>
+    <div class="graphic_block" id="price_chart"></div>
 </div>
 <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(drawChart);
+
+            function drawChart() {
+                let data = google.visualization.arrayToDataTable([
+                    ['Дата', 'Средняя', 'Медианная'],
+                    {% for date, price in prices.items() %}
+                    [new Date({{ date.replace('-', ', ') }}), {{ price.price_average }}, {{ price.price_median }}],
+                    {% endfor %}
+                ]);
+
+                let options = {
+                  title: 'График изменения цены',
+                  curveType: 'function',
+                  legend: { position: 'bottom' },
+                  hAxis: {
+                    format: 'd.M.yy',
+                    gridlines: {count: 15}
+                  },
+                  pointSize: 10,
+                  width: 700,
+                  height: 500,
+                };
+
+                let chart = new google.visualization.LineChart(document.getElementById('price_chart'));
+
+                chart.draw(data, options);
+            }
+        </script>
 <script src="{{ url_for('static', filename='js/render_products.js') }}"></script>
 </body>
 </html>

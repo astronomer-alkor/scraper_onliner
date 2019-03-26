@@ -76,9 +76,8 @@ $('input.field').on('change', function () {
 });
 
 
-$('input.field_date_js').focusout( function () {
-    let data = get_filters();
-    get_products('', data);
+$('.graphic_button button').click( function () {
+    $('.graphic_block').toggleClass('graphic_block--active');
 });
 
 

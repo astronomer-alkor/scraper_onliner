@@ -16,6 +16,7 @@ from requests.exceptions import (
 from app.core.database import (
     DB,
     get_list_categories,
+    update_price_by_category
 )
 
 COLLECTOR = create_collector('collector', 'https')
@@ -89,17 +90,6 @@ def process_product(product):
         if today not in item['price']:
             products.update_one({'key': product['key']}, {'$set': {f'price.{today}': product['price'][today],
                                                                    'current_price': product['price'][today]}})
-
-
-def get_price_by_category(product_category):
-    today = datetime.now().strftime('%Y-%m-%d')
-    category = DB.categories.find_one({'category': product_category})
-    if today not in category['price']:
-        data = [item['current_price'] for item in DB.products.find({'category': product_category})]
-        category_price_average = round(sum([item['price_average'] for item in data]) / len(data), ndigits=1)
-        category_price_median = round(sum([item['price_median'] for item in data]) / len(data), ndigits=1)
-        data = {'price_average': category_price_average, 'price_median': category_price_median}
-        DB.categories.update_one({'category': product_category}, {'$set': {f'price.{today}': data}})
 
 
 def get_data_by_request(url, category):
@@ -226,7 +216,7 @@ def parse_category(category):
             print(category, counter, 'from', page_count * 30)
             if counter == 10:
                 return
-    get_price_by_category(category)
+    update_price_by_category(category)
 
 
 def parse_categories(categories):
