@@ -3,6 +3,7 @@ from urllib.parse import (
     urlparse,
     urljoin
 )
+from urllib3.exceptions import ReadTimeoutError
 from datetime import datetime
 from pprint import pprint
 from multiprocessing.pool import ThreadPool
@@ -11,7 +12,9 @@ from proxyscrape import create_collector
 import requests
 from requests.exceptions import (
     ConnectTimeout,
-    ProxyError
+    ProxyError,
+    ReadTimeout,
+    ConnectionError
 )
 from app.core.database import (
     DB,
@@ -42,21 +45,21 @@ def get_response_use_proxy(url, proxies):
                     response = requests.get(url, proxies={**proxy}, timeout=2)
                     if response.status_code == 200:
                         return response, proxies
-                except (ConnectTimeout, ProxyError):
+                except (ReadTimeout, ConnectTimeout, ProxyError, ReadTimeoutError, ConnectionError):
                     continue
             proxies.clear()
         proxy = COLLECTOR.get_proxy()
         proxy = {proxy.type: ':'.join((proxy.host, proxy.port))}
         try:
             response = requests.get(url, proxies={**proxy}, timeout=2)
-        except (ConnectTimeout, ProxyError):
+        except (ReadTimeout, ConnectTimeout, ProxyError, ReadTimeoutError, ConnectionError):
             continue
         if response.status_code == 200:
             proxies.append(proxy)
             return response, proxies
 
 
-def get_response(url, use_proxy=False):
+def get_response(url, use_proxy=True):
     if use_proxy:
         return get_response_use_proxy(url)
     return requests.get(url)
@@ -214,13 +217,13 @@ def parse_category(category):
             process_product(data)
             counter += 1
             print(category, counter, 'from', page_count * 30)
-            if counter == 10:
-                return
-    update_price_by_category(category)
+            if counter == 1000:
+                update_price_by_category(category)
 
 
 def parse_categories(categories):
-    pool = ThreadPool(1)
+    categories = ('mobile', 'notebook', 'tabletpc')
+    pool = ThreadPool(5)
     pool.map(parse_category, categories)
 
 

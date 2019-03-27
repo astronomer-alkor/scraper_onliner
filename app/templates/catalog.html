@@ -78,10 +78,13 @@
                 </div>
             </div>
     </div>
+    {% if prices|length > 1%}
     <div class="graphic_block" id="price_chart"></div>
+    {% endif %}
 </div>
 <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+{% if prices|length > 1%}
 <script src="https://www.gstatic.com/charts/loader.js"></script>
 <script>
             google.charts.load('current', {'packages':['corechart']});
@@ -112,7 +115,8 @@
 
                 chart.draw(data, options);
             }
-        </script>
+</script>
+{% endif %}
 <script src="{{ url_for('static', filename='js/render_products.js') }}"></script>
 </body>
 </html>

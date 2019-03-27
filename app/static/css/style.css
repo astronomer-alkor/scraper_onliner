@@ -23,6 +23,7 @@ ul {
 }
 
 .products_block {
+    position: relative;
     box-sizing: border-box;
     padding-left: 20px;
     width: 1100px;
@@ -237,6 +238,7 @@ ul {
 
 .filter_block {
     max-height: 300px;
+    overflow-y: auto;
 }
 
 .checkbox_item {
@@ -512,6 +514,12 @@ ul {
     color: #000000;
 }
 
+.not_found {
+    position: absolute;
+    top: 50%;
+    width: 90%;
+    text-align: center;
+}
 
 
 
