@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name=viewport content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
           integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
@@ -11,9 +12,11 @@
 <body>
 <div class="wrapper">
     <div class="container product_container">
-        <div class="back">
-            <a href="{{ prev_url }}">назад</a>
-        </div>
+       <header class="header">
+            <div class="back">
+                <a href="{{ prev_url }}">назад</a>
+            </div>
+        </header>
         <h1 class="product_caption">{{ product.full_name }}</h1>
         <div class="product_block">
             <div class="product_image">
@@ -22,7 +25,7 @@
             <div class="product_description">
                 <p class="full_description">{{ product.description}}</p>
                 <a href="{{ product.html_url }}" class="real_url" target="_blank">Ссылка на товар</a>
-                <div class="product__price">
+                <div class="product__price product__price_item">
                     {{ product.current_price.price_min }} – {{ product.current_price.price_max}} руб.
                 </div>
             </div>
@@ -58,6 +61,9 @@
         <script>
             google.charts.load('current', {'packages':['corechart']});
             google.charts.setOnLoadCallback(drawChart);
+            window.addEventListener('resize', function(event){
+                drawChart();
+            });
 
             function drawChart() {
                 let data = google.visualization.arrayToDataTable([
@@ -71,6 +77,7 @@
                 let options = {
                   title: 'График изменения цены',
                   curveType: 'function',
+                  width: '100%',
                   legend: { position: 'bottom' },
                   hAxis: {
                     format: 'd.M.yy',
@@ -78,10 +85,14 @@
                   },
                   pointSize: 10
                 };
+                function resize () {
+                    let chart = new google.visualization.LineChart(document.getElementById('price_chart'));
 
-                let chart = new google.visualization.LineChart(document.getElementById('price_chart'));
+                    chart.draw(data, options);
+                }
 
-                chart.draw(data, options);
+                window.onload = resize();
+                window.onresize = resize();
             }
         </script>
     {% endif %}

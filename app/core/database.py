@@ -71,10 +71,11 @@ def update_price_by_category(product_category):
     category = DB.categories.find_one({'category': product_category})
     if today not in category['price']:
         data = [item['current_price'] for item in DB.products.find({'category': product_category})]
-        category_price_average = round(sum([item['price_average'] for item in data]) / len(data), ndigits=1)
-        category_price_median = round(sum([item['price_median'] for item in data]) / len(data), ndigits=1)
-        data = {'price_average': category_price_average, 'price_median': category_price_median}
-        DB.categories.update_one({'category': product_category}, {'$set': {f'price.{today}': data}})
+        if data:
+            category_price_average = round(sum([item['price_average'] for item in data]) / len(data), ndigits=1)
+            category_price_median = round(sum([item['price_median'] for item in data]) / len(data), ndigits=1)
+            data = {'price_average': category_price_average, 'price_median': category_price_median}
+            DB.categories.update_one({'category': product_category}, {'$set': {f'price.{today}': data}})
 
 
 def get_prices_by_category(category):
@@ -91,4 +92,4 @@ def get_categories_structure():
 
 
 if __name__ == '__main__':
-    pprint(DB.products.find_one({}))
+    pprint(DB.products.find_one({'category': 'mobile'}))

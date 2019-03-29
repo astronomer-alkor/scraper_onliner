@@ -42,7 +42,7 @@ def get_response_use_proxy(url, proxies):
         if proxies:
             for proxy in proxies:
                 try:
-                    response = requests.get(url, proxies={**proxy}, timeout=2)
+                    response = requests.get(url, proxies={**proxy}, timeout=1)
                     if response.status_code == 200:
                         return response, proxies
                 except (ReadTimeout, ConnectTimeout, ProxyError, ReadTimeoutError, ConnectionError):
@@ -51,7 +51,7 @@ def get_response_use_proxy(url, proxies):
         proxy = COLLECTOR.get_proxy()
         proxy = {proxy.type: ':'.join((proxy.host, proxy.port))}
         try:
-            response = requests.get(url, proxies={**proxy}, timeout=2)
+            response = requests.get(url, proxies={**proxy}, timeout=1)
         except (ReadTimeout, ConnectTimeout, ProxyError, ReadTimeoutError, ConnectionError):
             continue
         if response.status_code == 200:
@@ -217,13 +217,15 @@ def parse_category(category):
             process_product(data)
             counter += 1
             print(category, counter, 'from', page_count * 30)
-            if counter == 1000:
+            if counter == 100:
                 update_price_by_category(category)
+                return
+    update_price_by_category(category)
 
 
 def parse_categories(categories):
     categories = ('mobile', 'notebook', 'tabletpc')
-    pool = ThreadPool(5)
+    pool = ThreadPool(3)
     pool.map(parse_category, categories)
 
 

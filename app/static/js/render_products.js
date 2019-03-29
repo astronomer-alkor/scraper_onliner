@@ -76,11 +76,6 @@ $('input.field').on('change', function () {
 });
 
 
-$('.graphic_button button').click( function () {
-    $('.graphic_block').toggleClass('graphic_block--active');
-});
-
-
 $('input.field_range').on('keyup', function () {
     let data = get_filters();
     get_products('', data);
