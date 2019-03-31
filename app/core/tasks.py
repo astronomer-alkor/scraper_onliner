@@ -10,7 +10,7 @@ from app.core.parser_helper import (
 from app.core.database import DB
 
 
-@celery.task
+@celery.task(ignore_result=True)
 def get_data_by_request(url, category):
     items = get_response(url).json()['products']
     for item in items:
@@ -39,14 +39,17 @@ def get_data_by_request(url, category):
         current_price['price_max'] = max_price
         data['current_price'] = current_price
         data['price'][today] = current_price
-        data['img_url'] = ''.join(('https:', item['images']['header']))
+        if item['images']['header']:
+            data['img_url'] = ''.join(('https:', item['images']['header']))
+        else:
+            data['img_url'] = ''
         data['category'] = category
         if not DB.products.find_one({'key': data['key']}):
             data['spec'] = parse_catalog_item(data['html_url'])
         process_product(data)
 
 
-@celery.task
+@celery.task(ignore_result=True)
 def update_price_by_category(product_category):
     today = datetime.now().strftime('%Y-%m-%d')
     category = DB.categories.find_one({'category': product_category})

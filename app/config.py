@@ -1,4 +1,3 @@
 class Configuration:
     DEBUG = True
-    CELERY_BROKER_URL = 'mongodb://localhost:27017/main_database'
-    CELERY_RESULT_BACKEND = 'mongodb://localhost:27017/main_database'
+    CELERY_BROKER_URL = 'amqp://admin:esmwu&astr@localhost:5672/rabbit@Y50-70'

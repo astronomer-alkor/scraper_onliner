@@ -79,4 +79,5 @@ def get_categories_structure():
 
 
 if __name__ == '__main__':
-    pass
+    from app.core.celery_config import celery
+    pprint(DB.categories.find_one({'category': 'pump'}))
