@@ -61,6 +61,8 @@ def get_manufacturer(url):
 
 def get_price_by_positions(url):
     items = get_response(url).json()['positions']['primary']
+    if not items:
+        raise TypeError
     prices = []
     for item in items:
         prices.append(float(item['position_price']['amount']))
@@ -87,11 +89,13 @@ def parse_catalog_item(url):
                                    if isinstance(row_item, str)])
             except AttributeError:
                 value = row_items[1].find('span')
+                if not value:
+                    continue
                 if value['class'] == ['i-tip']:
                     value = True
                 else:
                     value = False
-            except IndexError:
+            except (AttributeError, IndexError):
                 continue
             if key == 'Дата выхода на рынок':
                 value = int(value.replace(' г.', ''))

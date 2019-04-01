@@ -29,10 +29,10 @@ def get_data_by_request(url, category):
         try:
             min_price = float(item['prices']['price_min']['amount'])
             max_price = float(item['prices']['price_max']['amount'])
+            average, median = get_price_by_positions(item['prices']['url'])
         except TypeError:
             continue
         today = datetime.now().strftime('%Y-%m-%d')
-        average, median = get_price_by_positions(item['prices']['url'])
         current_price['price_average'] = average
         current_price['price_median'] = median
         current_price['price_min'] = min_price
