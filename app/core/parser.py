@@ -81,7 +81,7 @@ def parse_category(category):
 
 def parse_categories(categories):
     pool = ThreadPool(20)
-    categories = ('notebook', 'tabletpc', 'monoblock', 'desktoppc', 'display')
+    categories = ('notebook', 'tabletpc', 'monoblock', 'desktoppc')
     pool.map(parse_category, categories)
 
 

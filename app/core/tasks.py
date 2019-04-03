@@ -47,6 +47,7 @@ def get_data_by_request(url, category):
         if not DB.products.find_one({'key': data['key']}):
             data['spec'] = parse_catalog_item(data['html_url'])
         process_product(data)
+        break
 
 
 @celery.task(ignore_result=True)
