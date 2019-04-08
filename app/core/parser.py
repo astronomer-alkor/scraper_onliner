@@ -6,6 +6,7 @@ from urllib.parse import (
 from pprint import pprint
 from multiprocessing.pool import ThreadPool
 from bs4 import BeautifulSoup
+from celery import chord
 from app.core.database import (
     DB,
     get_list_categories,
@@ -69,19 +70,15 @@ def get_categories_structure(url='https://catalog.onliner.by/'):
 
 
 def parse_category(category):
-    counter = 1
     base_url = 'https://catalog.api.onliner.by/search'
     page_count = get_page_count(base_url, category)
-    for url in generate_urls(base_url, category, page_count):
-        get_data_by_request.delay(url, category)
-        print('add', category, ' ', counter)
-        counter += 1
-    update_price_by_category.delay(category)
+    chord(get_data_by_request.s(url, category)
+          for url in generate_urls(base_url, category, page_count))(update_price_by_category.s(category))
 
 
 def parse_categories(categories):
-    pool = ThreadPool(20)
-    categories = ('notebook', 'tabletpc', 'monoblock', 'desktoppc')
+    pool = ThreadPool(3)
+    categories = ('tabletpc',)
     pool.map(parse_category, categories)
 
 

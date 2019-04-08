@@ -80,3 +80,4 @@ def get_categories_structure():
 
 if __name__ == '__main__':
     pprint(len(list(DB.products.find({}))))
+    pprint(DB.categories.find_one({'category': 'tabletpc'}))

@@ -10,7 +10,7 @@ from app.core.parser_helper import (
 from app.core.database import DB
 
 
-@celery.task(ignore_result=True)
+@celery.task
 def get_data_by_request(url, category):
     items = get_response(url).json()['products']
     for item in items:
@@ -47,11 +47,10 @@ def get_data_by_request(url, category):
         if not DB.products.find_one({'key': data['key']}):
             data['spec'] = parse_catalog_item(data['html_url'])
         process_product(data)
-        break
 
 
-@celery.task(ignore_result=True)
-def update_price_by_category(product_category):
+@celery.task
+def update_price_by_category(data, product_category):
     today = datetime.now().strftime('%Y-%m-%d')
     category = DB.categories.find_one({'category': product_category})
     if today not in category['price']:

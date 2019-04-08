@@ -103,6 +103,8 @@ ul {
 }
 
 .product_table {
+    width: 100%;
+    box-sizing: border-box;
     margin: 0 auto;
     padding: 0 20px;
 }
