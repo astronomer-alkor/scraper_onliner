@@ -113,4 +113,5 @@ def process_product(product):
         today = datetime.now().strftime('%Y-%m-%d')
         if today not in item['price']:
             products.update_one({'key': product['key']}, {'$set': {f'price.{today}': product['price'][today],
-                                                                   'current_price': product['price'][today]}})
+                                                                   'current_price': product['price'][today],
+                                                                   'prediction_price': product['prediction_price']}})
