@@ -86,6 +86,16 @@
                                {"v": true}
                               ]},
                         {% endfor %}
+                        {% for date, price in product.prediction_price.items() %}
+                        {"c": [
+                               {"v": new Date({{ date.replace('-', ', ') }}) },
+                               {"v": {{ price.price_min }} },
+                               {"v": {{ price.price_max }} },
+                               {"v": {{ price.price_average }} },
+                               {"v": {{ price.price_median }} },
+                               {"v": false}
+                              ]},
+                        {% endfor %}
                     ]
                 });
                 let options = {

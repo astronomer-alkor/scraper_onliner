@@ -11,7 +11,7 @@ def exponential_fit(x, a, b, c):
     return a * np.exp(-b * x) + c
 
 
-def price_prediction(prices, count=1):
+def make_prediction(prices, count=2):
     x = np.array([i for i in range(len(prices.keys()))])
     dates = list(prices.keys())
     y = np.array(list(prices.values()))
@@ -22,16 +22,16 @@ def price_prediction(prices, count=1):
         new_y = round(exponential_fit(new_x, *fitting_parameters), ndigits=2)
         x = np.append(x, new_x)
         y = np.append(y, new_y)
-    return dict(zip(dates, y))
+    return dict(zip(dates[len(dates) - count:], y[len(dates) - count:]))
 
 
-def get_all_prediction(prices):
+def get_prediction(prices):
     d = defaultdict(list)
     dates = list(prices.keys())
     for item in prices.values():
         for k, v in item.items():
             d[k].append(v)
-    data = {j: price_prediction(dict(zip(dates, i))) for j, i in d.items()}
+    data = {j: make_prediction(dict(zip(dates, i))) for j, i in d.items()}
     new_dates = list(list(data.values())[0].keys())
 
     result_values = []
@@ -47,4 +47,4 @@ if __name__ == '__main__':
     from pprint import pprint
     prices = DB.products.find_one({'category': 'tabletpc'})['price']
     pprint(prices)
-    pprint(get_all_prediction(prices))
+    pprint(get_prediction(prices))

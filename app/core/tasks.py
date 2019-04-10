@@ -7,6 +7,7 @@ from app.core.parser_helper import (
     process_product,
     get_response
 )
+from app.core.machine_learning import get_prediction
 from app.core.database import DB
 
 
@@ -44,13 +45,16 @@ def get_data_by_request(url, category):
         else:
             data['img_url'] = ''
         data['category'] = category
-        if not DB.products.find_one({'key': data['key']}):
+        product = DB.products.find_one({'key': data['key']})
+        if not product:
             data['spec'] = parse_catalog_item(data['html_url'])
+        else:
+            data['prediction_price'] = get_prediction(product['price'])
         process_product(data)
 
 
 @celery.task
-def update_price_by_category(data, product_category):
+def update_price_by_category(_, product_category):
     today = datetime.now().strftime('%Y-%m-%d')
     category = DB.categories.find_one({'category': product_category})
     if today not in category['price']:
