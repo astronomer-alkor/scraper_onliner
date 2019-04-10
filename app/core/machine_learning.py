@@ -45,6 +45,6 @@ def get_all_prediction(prices):
 if __name__ == '__main__':
     from app.core.database import DB
     from pprint import pprint
-    prices = DB.categories.find_one({'category': 'tabletpc'})['price']
+    prices = DB.products.find_one({'category': 'tabletpc'})['price']
     pprint(prices)
     pprint(get_all_prediction(prices))
