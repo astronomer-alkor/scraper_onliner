@@ -40,7 +40,7 @@ def catalog(category):
         limit = 30
     if request.method == 'POST':
         data = parse_data(request.get_json())
-        time.sleep(1)
+        time.sleep(0)
         products = list(get_products_preview(category, fields=data, page=page, limit=limit))
         if not products:
             return '<div class="not_found">К сожалению, по вашему запросу не нашлось продуктов.\n ' \

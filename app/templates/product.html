@@ -66,22 +66,35 @@
             });
 
             function drawChart() {
-                let data = google.visualization.arrayToDataTable([
-                    ['Дата', 'Минимальная', 'Максимальная', 'Средняя', 'Медианная'],
-                    {% for date, price in product.price.items() %}
-                        [new Date({{ date.replace('-', ', ') }}), {{ price.price_min }}, {{ price.price_max }},
-                        {{ price.price_average }}, {{ price.price_median }}],
-                    {% endfor %}
-                ]);
-
+                let data = new google.visualization.DataTable({
+                    "cols": [
+                        {"type": "date", "label": "Дата"},
+                        {"type": "number", "label": "Минимальная"},
+                        {"type": "number", "label": "Максимальная"},
+                        {"type": "number", "label": "Средняя"},
+                        {"type": "number", "label": "Медианная"},
+                        {"type": "boolean", "role": "certainty"}
+                    ],
+                    "rows": [
+                        {% for date, price in product.price.items() %}
+                        {"c": [
+                               {"v": new Date({{ date.replace('-', ', ') }}) },
+                               {"v": {{ price.price_min }} },
+                               {"v": {{ price.price_max }} },
+                               {"v": {{ price.price_average }} },
+                               {"v": {{ price.price_median }} },
+                               {"v": true}
+                              ]},
+                        {% endfor %}
+                    ]
+                });
                 let options = {
                   title: 'График изменения цены',
                   curveType: 'function',
                   width: '100%',
                   legend: { position: 'bottom' },
                   hAxis: {
-                    format: 'd.M.yy',
-                    gridlines: {count: 15}
+                    format: 'd.M.yy'
                   },
                   pointSize: 10
                 };

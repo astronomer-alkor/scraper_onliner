@@ -15,7 +15,7 @@ def price_prediction(prices, count=1):
     x = np.array([i for i in range(len(prices.keys()))])
     dates = list(prices.keys())
     y = np.array(list(prices.values()))
-    fitting_parameters, covariance = curve_fit(exponential_fit, list(x), list(y))
+    fitting_parameters, covariance = curve_fit(exponential_fit, list(x), list(y), maxfev=1000)
     for _ in range(count):
         dates.append(datetime.strftime(datetime.strptime(dates[-1], '%Y-%m-%d') + timedelta(days=1), '%Y-%m-%d'))
         new_x = x[-1] + 1
