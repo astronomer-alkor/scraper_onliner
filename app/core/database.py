@@ -66,7 +66,7 @@ def parse_data(data):
 
 
 def get_prices_by_category(category):
-    return DB.categories.find_one({'category': category}, {'_id': 0, 'price': 1})['price']
+    return DB.categories.find_one({'category': category}, {'_id': 0, 'price': 1, 'prediction_price': 1})
 
 
 def get_list_categories():
@@ -79,5 +79,4 @@ def get_categories_structure():
 
 
 if __name__ == '__main__':
-    pprint(len(list(DB.products.find({}))))
-    pprint(DB.categories.find_one({'category': 'tabletpc'}))
+    pprint(get_prices_by_category('tabletpc'))

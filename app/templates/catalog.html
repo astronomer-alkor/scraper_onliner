@@ -104,12 +104,20 @@
                         {"type": "boolean", "role": "certainty"}
                     ],
                     "rows": [
-                        {% for date, price in prices.items() %}
+                        {% for date, price in prices.price.items() %}
                         {"c": [
                                {"v": new Date({{ date.replace('-', ', ') }}) },
                                {"v": {{ price.price_average }} },
                                {"v": {{ price.price_median }} },
                                {"v": true}
+                              ]},
+                        {% endfor %}
+                        {% for date, price in prices.prediction_price.items() %}
+                        {"c": [
+                               {"v": new Date({{ date.replace('-', ', ') }}) },
+                               {"v": {{ price.price_average }} },
+                               {"v": {{ price.price_median }} },
+                               {"v": false}
                               ]},
                         {% endfor %}
                     ]

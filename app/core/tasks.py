@@ -39,6 +39,7 @@ def get_data_by_request(url, category):
         current_price['price_min'] = min_price
         current_price['price_max'] = max_price
         data['current_price'] = current_price
+        data['prediction_price'] = {}
         data['price'][today] = current_price
         if item['images']['header']:
             data['img_url'] = ''.join(('https:', item['images']['header']))
@@ -48,8 +49,6 @@ def get_data_by_request(url, category):
         product = DB.products.find_one({'key': data['key']})
         if not product:
             data['spec'] = parse_catalog_item(data['html_url'])
-        else:
-            data['prediction_price'] = get_prediction(product['price'])
         process_product(data)
 
 
@@ -64,3 +63,9 @@ def update_price_by_category(_, product_category):
             category_price_median = round(sum([item['price_median'] for item in data]) / len(data), ndigits=1)
             data = {'price_average': category_price_average, 'price_median': category_price_median}
             DB.categories.update_one({'category': product_category}, {'$set': {f'price.{today}': data}})
+    if len(category['price']) > 2:
+        prediction = get_prediction(category['price'])
+    else:
+        prediction = {}
+    DB.categories.update_one({'category': product_category},
+                             {'$set': {'prediction_price': prediction}})

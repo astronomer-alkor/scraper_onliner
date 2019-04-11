@@ -10,6 +10,7 @@ from requests.exceptions import (
 from bs4 import BeautifulSoup
 from proxyscrape import create_collector
 from app.core.database import DB
+from app.core.machine_learning import get_prediction
 
 
 COLLECTOR = create_collector('collector', 'https')
@@ -113,5 +114,7 @@ def process_product(product):
         today = datetime.now().strftime('%Y-%m-%d')
         if today not in item['price']:
             products.update_one({'key': product['key']}, {'$set': {f'price.{today}': product['price'][today],
-                                                                   'current_price': product['price'][today],
-                                                                   'prediction_price': product['prediction_price']}})
+                                                                   'current_price': product['price'][today]}})
+        if len(product['price']) > 2:
+            products.update_one({'key': product['key']},
+                                {'$set': {'prediction_price': get_prediction(product['price'])}})

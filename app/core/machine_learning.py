@@ -4,22 +4,20 @@ from datetime import (
 )
 from collections import defaultdict
 import numpy as np
-from scipy.optimize import curve_fit
-
-
-def exponential_fit(x, a, b, c):
-    return a * np.exp(-b * x) + c
+from scipy.interpolate import (
+    splrep, splev
+)
 
 
 def make_prediction(prices, count=2):
     x = np.array([i for i in range(len(prices.keys()))])
     dates = list(prices.keys())
     y = np.array(list(prices.values()))
-    fitting_parameters, covariance = curve_fit(exponential_fit, list(x), list(y), maxfev=1000)
+    f = splrep(list(x), list(y), k=1, s=0)
     for _ in range(count):
         dates.append(datetime.strftime(datetime.strptime(dates[-1], '%Y-%m-%d') + timedelta(days=1), '%Y-%m-%d'))
         new_x = x[-1] + 1
-        new_y = round(exponential_fit(new_x, *fitting_parameters), ndigits=2)
+        new_y = round(float(splev(new_x, f)), ndigits=2)
         x = np.append(x, new_x)
         y = np.append(y, new_y)
     return dict(zip(dates[len(dates) - count:], y[len(dates) - count:]))
@@ -40,11 +38,3 @@ def get_prediction(prices):
 
     result = dict(zip(new_dates, result_values))
     return result
-
-
-if __name__ == '__main__':
-    from app.core.database import DB
-    from pprint import pprint
-    prices = DB.products.find_one({'category': 'tabletpc'})['price']
-    pprint(prices)
-    pprint(get_prediction(prices))

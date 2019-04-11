@@ -3,7 +3,6 @@ from urllib.parse import (
     urlparse,
     urljoin
 )
-from pprint import pprint
 from multiprocessing.pool import ThreadPool
 from bs4 import BeautifulSoup
 from celery import chord
