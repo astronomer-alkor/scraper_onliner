@@ -76,7 +76,7 @@ def parse_category(category):
 
 
 def parse_categories(categories):
-    pool = ThreadPool(3)
+    pool = ThreadPool(1)
     categories = ('tabletpc',)
     pool.map(parse_category, categories)
 

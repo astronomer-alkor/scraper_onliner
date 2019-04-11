@@ -100,6 +100,7 @@
                     "cols": [
                         {"type": "date", "label": "Дата"},
                         {"type": "number", "label": "Средняя"},
+                        {"type": "boolean", "role": "certainty"},
                         {"type": "number", "label": "Медианная"},
                         {"type": "boolean", "role": "certainty"}
                     ],
@@ -108,6 +109,7 @@
                         {"c": [
                                {"v": new Date({{ date.replace('-', ', ') }}) },
                                {"v": {{ price.price_average }} },
+                               {"v": true},
                                {"v": {{ price.price_median }} },
                                {"v": true}
                               ]},
@@ -116,6 +118,7 @@
                         {"c": [
                                {"v": new Date({{ date.replace('-', ', ') }}) },
                                {"v": {{ price.price_average }} },
+                               {"v": false},
                                {"v": {{ price.price_median }} },
                                {"v": false}
                               ]},

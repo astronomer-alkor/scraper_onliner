@@ -115,6 +115,12 @@ def process_product(product):
         if today not in item['price']:
             products.update_one({'key': product['key']}, {'$set': {f'price.{today}': product['price'][today],
                                                                    'current_price': product['price'][today]}})
-        if len(product['price']) > 2:
+        item = products.find_one({'key': product['key']})
+        if len(item['price']) > 2:
             products.update_one({'key': product['key']},
-                                {'$set': {'prediction_price': get_prediction(product['price'])}})
+                                {'$set': {'prediction_price': get_prediction(item['price'])}})
+
+
+if __name__ == '__main__':
+    from pprint import pprint
+    process_product(DB.products.find_one({'key': 'cpnl0916ltegray'}))

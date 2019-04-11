@@ -79,4 +79,5 @@ def get_categories_structure():
 
 
 if __name__ == '__main__':
-    pprint(get_prices_by_category('tabletpc'))
+    # pprint(get_prices_by_category('tabletpc'))
+    pprint(DB.categories.find_one({'category': 'tabletpc'}))

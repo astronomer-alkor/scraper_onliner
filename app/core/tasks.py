@@ -63,6 +63,7 @@ def update_price_by_category(_, product_category):
             category_price_median = round(sum([item['price_median'] for item in data]) / len(data), ndigits=1)
             data = {'price_average': category_price_average, 'price_median': category_price_median}
             DB.categories.update_one({'category': product_category}, {'$set': {f'price.{today}': data}})
+    category = DB.categories.find_one({'category': product_category})
     if len(category['price']) > 2:
         prediction = get_prediction(category['price'])
     else:
