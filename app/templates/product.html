@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+          integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>{{ product.full_name }}</title>
+</head>
+<body>
+<div class="wrapper">
+    <div class="container product_container">
+       <header class="header">
+            <div class="back">
+                <a href="{{ prev_url }}">назад</a>
+            </div>
+        </header>
+        <h1 class="product_caption">{{ product.full_name }}</h1>
+        <div class="product_block">
+            <div class="product_image">
+                <div class="image" style="background-image: url({{ product.img_url }})"></div>
+            </div>
+            <div class="product_description">
+                <p class="full_description">{{ product.description}}</p>
+                <a href="{{ product.html_url }}" class="real_url" target="_blank">Ссылка на товар</a>
+                <div class="product__price product__price_item">
+                    {{ product.current_price.price_min }} – {{ product.current_price.price_max}} руб.
+                </div>
+            </div>
+        </div>
+        {% if product.price|length > 1 %}
+        <div class="price_chart" id="price_chart"></div>
+        {% endif %}
+        <table class="product_table">
+            {% for title, rows in product.spec.items() %}
+            <tr class="table_title">
+                <td>{{ title }}</td>
+            </tr>
+            {% for key, value in rows.items() %}
+            <tr class="table_row">
+                <td class="table_col">{{ key }}</td>
+                <td class="table_col">
+                    {% if value == True %}
+                    <i class="fas fa-check fas_green"></i>
+                    {% elif value == False %}
+                    <i class="fas fa-times fas_red"></i>
+                    {% else %}
+                    <div>{{ value }}</div>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            {% endfor %}
+        </table>
+    </div>
+</div>
+    {% if product.price|length > 1 %}
+        <script src="https://www.gstatic.com/charts/loader.js"></script>
+        <script>
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(drawChart);
+            window.addEventListener('resize', function(event){
+                drawChart();
+            });
+
+            function drawChart() {
+                let data = new google.visualization.DataTable({
+                    "cols": [
+                        {"type": "date", "label": "Дата"},
+                        {"type": "number", "label": "Минимальная"},
+                        {"type": "boolean", "role": "certainty"},
+                        {"type": "number", "label": "Максимальная"},
+                        {"type": "boolean", "role": "certainty"},
+                        {"type": "number", "label": "Средняя"},
+                        {"type": "boolean", "role": "certainty"},
+                        {"type": "number", "label": "Медианная"},
+                        {"type": "boolean", "role": "certainty"}
+                    ],
+                    "rows": [
+                        {% for date, price in product.price.items() %}
+                        {"c": [
+                               {"v": new Date({{ date.replace('-', ', ') }}) },
+                               {"v": {{ price.price_min }} },
+                               {"v": true},
+                               {"v": {{ price.price_max }} },
+                               {"v": true},
+                               {"v": {{ price.price_average }} },
+                               {"v": true},
+                               {"v": {{ price.price_median }} },
+                               {"v": true}
+                              ]},
+                        {% endfor %}
+                        {% for date, price in product.prediction_price.items() %}
+                        {"c": [
+                               {"v": new Date({{ date.replace('-', ', ') }}) },
+                               {"v": {{ price.price_min }} },
+                               {"v": false},
+                               {"v": {{ price.price_max }} },
+                               {"v": false},
+                               {"v": {{ price.price_average }} },
+                               {"v": false},
+                               {"v": {{ price.price_median }} },
+                               {"v": false}
+                              ]},
+                        {% endfor %}
+                    ]
+                });
+                let options = {
+                  title: 'График изменения цены',
+                  curveType: 'function',
+                  width: '100%',
+                  legend: { position: 'bottom' },
+                  hAxis: {
+                    format: 'd.M.yy'
+                  },
+                  pointSize: 10
+                };
+                function resize () {
+                    let chart = new google.visualization.LineChart(document.getElementById('price_chart'));
+
+                    chart.draw(data, options);
+                }
+
+                window.onload = resize();
+                window.onresize = resize();
+            }
+        </script>
+    {% endif %}
+</body>
+</html>

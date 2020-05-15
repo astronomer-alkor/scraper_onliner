@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+          integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>{{ category }}</title>
+</head>
+<body>
+<div class="wrapper">
+    <div class="container">
+        <header class="header">
+            <div class="back">
+                <a href="/">на главную</a>
+            </div>
+        </header>
+        {% if prices|length > 1%}
+        <div class="graphic_block price_chart" id="price_chart"></div>
+        {% endif %}
+        <section class="main_section">
+            <div class="filter">
+                <div class="filter_fieldset">
+                    <div class="filter_fieldset__label">Производитель</div>
+                    <div class="filter_block">
+                        <ul class="filter_fields">
+                            {% for vendor in vendors %}
+                            <li>
+                                <label class="checkbox_item">
+                                    {{ vendor }}
+                                    <input class="field" type="checkbox" name="{{ vendor }}" about="manufacturer">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="filter_fieldset">
+                    <div class="filter_fieldset__label">Минимальная цена</div>
+                    <div class="filter_block">
+                        <ul class="filter_fields_range" about="current_price.price_min">
+                            <li>
+                                <input class="field_range" type="number" placeholder="от" name="from">
+                            </li>
+                            <li>
+                                <input class="field_range" type="number" placeholder="до" name="to">
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="filter_fieldset">
+                    <div class="filter_fieldset__label">Дата выхода</div>
+                    <div class="filter_block">
+                        <ul class="filter_fields_range" about="spec.Общая информация.Дата выхода на рынок">
+                            <li>
+                                <input id="datepicker" class="field_range field_date_js" type="text"
+                                       placeholder="от" name="from" autocomplete="off">
+                            </li>
+                            <li>
+                                <input id="datepicker" class="field_range field_date_js" type="text"
+                                       placeholder="до" name="to" autocomplete="off">
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="products_block">
+            </div>
+            <div class="preloader-wrapper">
+                    <div id="cube-loader">
+                        <div class="caption">
+                            <div class="cube-loader">
+                                <div class="cube loader-1"></div>
+                                <div class="cube loader-2"></div>
+                                <div class="cube loader-4"></div>
+                                <div class="cube loader-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </section>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+{% if prices|length > 1%}
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script>
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(drawChart);
+            window.addEventListener('resize', function(event){
+                drawChart();
+            });
+
+            function drawChart() {
+                let data = new google.visualization.DataTable({
+                    "cols": [
+                        {"type": "date", "label": "Дата"},
+                        {"type": "number", "label": "Средняя"},
+                        {"type": "boolean", "role": "certainty"},
+                        {"type": "number", "label": "Медианная"},
+                        {"type": "boolean", "role": "certainty"}
+                    ],
+                    "rows": [
+                        {% for date, price in prices.price.items() %}
+                        {"c": [
+                               {"v": new Date({{ date.replace('-', ', ') }}) },
+                               {"v": {{ price.price_average }} },
+                               {"v": true},
+                               {"v": {{ price.price_median }} },
+                               {"v": true}
+                              ]},
+                        {% endfor %}
+                        {% for date, price in prices.prediction_price.items() %}
+                        {"c": [
+                               {"v": new Date({{ date.replace('-', ', ') }}) },
+                               {"v": {{ price.price_average }} },
+                               {"v": false},
+                               {"v": {{ price.price_median }} },
+                               {"v": false}
+                              ]},
+                        {% endfor %}
+                    ]
+                });
+                let options = {
+                  title: 'График изменения цены',
+                  curveType: 'function',
+                  legend: { position: 'bottom' },
+                  hAxis: {
+                    format: 'd.M.yy'
+                  },
+                  pointSize: 10,
+                  width: '100%',
+                };
+
+                function resize () {
+                    let chart = new google.visualization.LineChart(document.getElementById('price_chart'));
+
+                    chart.draw(data, options);
+                }
+
+                window.onload = resize();
+                window.onresize = resize();
+            }
+</script>
+{% endif %}
+<script src="{{ url_for('static', filename='js/render_products.js') }}"></script>
+</body>
+</html>
